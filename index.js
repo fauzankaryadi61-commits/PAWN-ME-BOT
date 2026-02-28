@@ -520,33 +520,6 @@ if (voiceTop.length < targetAmount) {
   voiceTop = [...voiceTop, ...randomData];
 }
 
-// Ambil member random kalau kosong
-const guildMembers = await interaction.guild.members.fetch();
-const realMembers = guildMembers
-  .filter(m => !m.user.bot)
-  .map(m => m.id);
-
-function getRandomMembers(amount) {
-  const shuffled = realMembers.sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, amount);
-}
-
-if (chatTop.length === 0) {
-  const randomIds = getRandomMembers(jumlah);
-  chatTop = randomIds.map(id => [
-    id,
-    { chat: { [waktu]: 0 } }
-  ]);
-}
-
-if (voiceTop.length === 0) {
-  const randomIds = getRandomMembers(jumlah);
-  voiceTop = randomIds.map(id => [
-    id,
-    { voice: { [waktu]: 0 } }
-  ]);
-}
-
     const chatText = chatTop.map((u, i) =>
   `${i + 1}. <@${u[0]}> — ${u[1].chat[waktu] || 0} XP`
 ).join("\n");
