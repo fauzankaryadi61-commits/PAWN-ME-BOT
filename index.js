@@ -492,8 +492,6 @@ const realMembers = guildMembers
   .filter(m => !m.user.bot)
   .map(m => m.id);
 
-jumlah = Math.min(jumlah, realMembers.length);
-
 function getRandomMembers(amount, exclude = []) {
   const pool = realMembers.filter(id => !exclude.includes(id));
   const shuffled = pool.sort(() => 0.5 - Math.random());
@@ -501,12 +499,12 @@ function getRandomMembers(amount, exclude = []) {
 }
 
 // Paksa Chat jadi targetAmount
-if (chatTop.length < jumlah) {
-  const needed = jumlah - chatTop.length;
+if (chatTop.length < targetAmount) {
+  const needed = targetAmount - chatTop.length;
 
   const existingIds = chatTop.map(u => u[0]);
 
-  const randomIds = getRandomMembers(jumlah * 2)
+  const randomIds = getRandomMembers(targetAmount * 2)
     .filter(id => !existingIds.includes(id))
     .slice(0, needed);
 
