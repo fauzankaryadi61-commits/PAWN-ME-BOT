@@ -492,6 +492,8 @@ const realMembers = guildMembers
   .filter(m => !m.user.bot)
   .map(m => m.id);
 
+jumlah = Math.min(jumlah, realMembers.length);
+
 function getRandomMembers(amount, exclude = []) {
   const pool = realMembers.filter(id => !exclude.includes(id));
   const shuffled = pool.sort(() => 0.5 - Math.random());
