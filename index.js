@@ -218,9 +218,7 @@ client.once("ready", async () => {
        name: "pmconfig",
        description: "Panel pengaturan sistem leveling Pawn Me"
      }
-     }
     ]
-  } 
 ];
 
   await client.application.commands.set(commands, GUILD_ID);
