@@ -56,6 +56,10 @@ function saveLevels() {
   fs.writeFileSync(LEVEL_FILE, JSON.stringify(levels, null, 2));
 }
 
+function saveConfig() {
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
+}
+
 function calculateLevel(exp) {
   return Math.floor(0.1 * Math.sqrt(exp));
 }
@@ -209,7 +213,12 @@ client.once("ready", async () => {
          { name: "10", value: 10 },
          { name: "15", value: 15 }
         ]
-      }
+    },
+    {
+       name: "pmconfig",
+       description: "Panel pengaturan sistem leveling Pawn Me"
+     }
+     }
     ]
   } 
 ];
@@ -588,6 +597,47 @@ const voiceText = voiceTop.map((u, i) =>
   return interaction.editReply({ embeds: [embed] });
 }
 
+    if (interaction.commandName === "pmconfig") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const embed = new MessageEmbed()
+    .setColor("#1ABC9C")
+    .setTitle("🎛 Pawn Me Leveling Control Panel")
+    .setDescription("Gunakan tombol di bawah untuk mengatur sistem leveling.")
+    .addField("Chat EXP", `${config.chat_exp}`, true)
+    .addField("Voice EXP / Min", `${config.voice_exp_per_minute}`, true)
+    .addField("Chat Cooldown", `${config.chat_cooldown} detik`, true)
+    .addField("Booster Multiplier", `${config.booster_multiplier}x`, true)
+    .addField("Double EXP", config.double_exp ? "Aktif" : "Nonaktif", true)
+    .addField("Role Reward", config.role_rewards_enabled ? "Aktif" : "Nonaktif", true)
+    .setFooter({ text: "Pawn Me Premium Level System" })
+    .setTimestamp();
+
+  const row = new MessageActionRow().addComponents(
+    new MessageButton()
+      .setCustomId("config_exp")
+      .setLabel("EXP Settings")
+      .setStyle("PRIMARY"),
+    new MessageButton()
+      .setCustomId("config_double")
+      .setLabel("Double EXP")
+      .setStyle("SUCCESS"),
+    new MessageButton()
+      .setCustomId("config_booster")
+      .setLabel("Booster")
+      .setStyle("SECONDARY"),
+    new MessageButton()
+      .setCustomId("config_role")
+      .setLabel("Role Reward")
+      .setStyle("DANGER")
+  );
+
+  return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+}
+    
     if (interaction.commandName === "ping") return interaction.reply("pong");
 
     if (interaction.commandName === "saranpanel") {
