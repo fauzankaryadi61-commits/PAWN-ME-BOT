@@ -444,35 +444,59 @@ client.on("interactionCreate", async (interaction) => {
 if (interaction.commandName === "pmleaderboard") {
 
   const kategori = interaction.options.getString("kategori");
-  const waktu = interaction.options.getString("waktu");
-  const jumlah = interaction.options.getInteger("jumlah") || 10;
+  const waktu = interaction.options.getString("waktu") || "total";
+  let jumlah = interaction.options.getInteger("jumlah");
 
-  const sorted = Object.entries(levels)
-    .map(([id, data]) => {
-      let value = 0;
+  // Default logic
+  if (!kategori) {
+    jumlah = jumlah || 5; // 5 chat + 5 voice
+  } else {
+    jumlah = jumlah || 10; // kalau pilih kategori → default 10
+  }
 
-      if (kategori === "combined") {
-        value = (data.chat[waktu] || 0) + (data.voice[waktu] || 0);
-      } else {
-        value = data[kategori][waktu] || 0;
-      }
+  const data = Object.entries(levels);
 
-      return { id, value };
-    })
-    .sort((a, b) => b.value - a.value)
-    .slice(0, jumlah);
+  const getSorted = (type) => {
+    return data
+      .sort((a, b) => (b[1][type][waktu] || 0) - (a[1][type][waktu] || 0))
+      .slice(0, jumlah);
+  };
 
   const embed = new MessageEmbed()
-    .setColor("#F1C40F")
+    .setColor("#57F287")
     .setTitle("🏆 Pawn Me Leaderboard")
-    .setDescription(
-  sorted.length > 0
-    ? sorted.map((u, i) => 
-        `**${i + 1}.** <@${u.id}> — ${u.value} XP`
-      ).join("\n")
-    : "Belum ada data leaderboard."
-)
     .setTimestamp();
+
+  // Kalau tidak pilih kategori → tampil dua-duanya
+  if (!kategori) {
+
+    const chatTop = getSorted("chat");
+    const voiceTop = getSorted("voice");
+
+    const chatText = chatTop.map((u, i) =>
+      `${i + 1}. <@${u[0]}> — ${u[1].chat[waktu]} XP`
+    ).join("\n") || "Belum ada data.";
+
+    const voiceText = voiceTop.map((u, i) =>
+      `${i + 1}. <@${u[0]}> — ${u[1].voice[waktu]} XP`
+    ).join("\n") || "Belum ada data.";
+
+    embed.addField("💬 Top Chat", chatText);
+    embed.addField("🎧 Top Voice", voiceText);
+
+  } else {
+
+    const top = getSorted(kategori);
+
+    const text = top.map((u, i) =>
+      `${i + 1}. <@${u[0]}> — ${u[1][kategori][waktu]} XP`
+    ).join("\n") || "Belum ada data.";
+
+    embed.addField(
+      kategori === "chat" ? "💬 Top Chat" : "🎧 Top Voice",
+      text
+    );
+  }
 
   return interaction.reply({ embeds: [embed] });
 }
