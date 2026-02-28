@@ -493,19 +493,22 @@ function getRandomMembers(amount, exclude = []) {
 }
 
 // Paksa Chat jadi targetAmount
-if (chatTop.length < targetAmount) {
-  const needed = targetAmount - chatTop.length;
-  const existingIds = chatTop.map(u => u[0]);
-  const randomIds = getRandomMembers(needed, existingIds);
+if (chatTop.length < jumlah) {
+  const needed = jumlah - chatTop.length;
 
-  const randomData = randomIds.map(id => [
+  const existingIds = chatTop.map(u => u[0]);
+
+  const randomIds = getRandomMembers(jumlah * 2)
+    .filter(id => !existingIds.includes(id))
+    .slice(0, needed);
+
+  const randomUsers = randomIds.map(id => [
     id,
     { chat: { [waktu]: 0 } }
   ]);
 
-  chatTop = [...chatTop, ...randomData];
+  chatTop = [...chatTop, ...randomUsers];
 }
-
 // Paksa Voice jadi targetAmount
 if (voiceTop.length < targetAmount) {
   const needed = targetAmount - voiceTop.length;
