@@ -88,11 +88,12 @@ const voiceTracker = new Map();
 
 const client = new Client({
   intents: [
-    Intents.FLAGS.GUILDS,
-    Intents.FLAGS.GUILD_MESSAGES,
-    Intents.FLAGS.GUILD_MEMBERS,
-    Intents.FLAGS.MESSAGE_CONTENT
-  ]
+  Intents.FLAGS.GUILDS,
+  Intents.FLAGS.GUILD_MESSAGES,
+  Intents.FLAGS.GUILD_MEMBERS,
+  Intents.FLAGS.GUILD_VOICE_STATES,
+  Intents.FLAGS.MESSAGE_CONTENT
+]
 });
 
 client.once("ready", async () => {
@@ -487,7 +488,8 @@ if (interaction.commandName === "pmleaderboard") {
 
 const targetAmount = jumlah; // 5 atau 10 tergantung mode
 
-const guildMembers = await interaction.guild.members.fetch();
+await interaction.guild.members.fetch({ force: true });
+const guildMembers = interaction.guild.members.cache;
 const realMembers = guildMembers
   .filter(m => !m.user.bot)
   .map(m => m.id);
