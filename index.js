@@ -212,10 +212,70 @@ client.once("ready", async () => {
   console.log("Slash commands registered.");
 });
 
-/* ================= AUTO MODERATION ================= */
 
 client.on("messageCreate", async (message) => {
   if (message.author.bot) return;
+
+// ================= LEVEL LEADERBOARD =================
+  if (message.content.toLowerCase() === "!pmleaderboard") {
+
+    function getLeaderboardData(guild) {
+      const users = Object.entries(levels);
+
+      if (users.length > 0) {
+        return users
+          .map(([id, data]) => ({
+            id,
+            username: data.username || "Unknown",
+            exp: data.exp,
+            level: calculateLevel(data.exp)
+          }))
+          .sort((a, b) => b.exp - a.exp)
+          .slice(0, 10);
+      }
+
+      const members = guild.members.cache
+        .filter(m => !m.user.bot)
+        .random(10);
+
+      if (!members) return [];
+
+      const memberArray = Array.isArray(members) ? members : [members];
+
+      return memberArray.map(member => {
+        const exp = Math.floor(Math.random() * 2000) + 200;
+        return {
+          id: member.id,
+          username: member.user.username,
+          exp: exp,
+          level: calculateLevel(exp)
+        };
+      }).sort((a, b) => b.exp - a.exp);
+    }
+
+    const leaderboard = getLeaderboardData(message.guild);
+
+    if (leaderboard.length === 0) {
+      return message.channel.send("Tidak ada member yang bisa ditampilkan.");
+    }
+
+    const desc = leaderboard
+      .map((user, index) =>
+        `**${index + 1}.** ${user.username} — Level ${user.level} (${user.exp} EXP)`
+      )
+      .join("\n");
+
+    const embed = new MessageEmbed()
+      .setColor("#F1C40F")
+      .setTitle("🏆 Pawn Me Leaderboard")
+      .setDescription(desc)
+      .setFooter({ text: "Pawn Me Level System" })
+      .setTimestamp();
+
+    return message.channel.send({ embeds: [embed] });
+  }
+
+/* ================= AUTO MODERATION ================= */
 
   const content = message.content.toLowerCase();
 
