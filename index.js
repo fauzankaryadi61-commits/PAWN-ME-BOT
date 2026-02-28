@@ -177,12 +177,6 @@ client.once("ready", async () => {
   description: "Lihat leaderboard Pawn Me",
   options: [
     {
-      name: "jumlah",
-      description: "Jumlah yang ditampilkan (default 10)",
-      type: 4,
-      required: false
-    },
-    {
       name: "kategori",
       description: "Kategori leaderboard",
       type: 3,
@@ -203,6 +197,12 @@ client.once("ready", async () => {
         { name: "Week", value: "week" },
         { name: "Day", value: "day" }
       ]
+    },
+    {
+      name: "jumlah",
+      description: "Jumlah yang ditampilkan (default 10)",
+      type: 4,
+      required: false
     }
   ]
 }
