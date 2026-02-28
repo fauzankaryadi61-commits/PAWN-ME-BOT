@@ -476,16 +476,43 @@ if (interaction.commandName === "pmleaderboard") {
   // Kalau tidak pilih kategori → tampil dua-duanya
   if (!kategori) {
 
-    const chatTop = getSorted("chat");
-    const voiceTop = getSorted("voice");
+    let chatTop = getSorted("chat");
+    let voiceTop = getSorted("voice");
+
+// Ambil member random kalau kosong
+const guildMembers = await interaction.guild.members.fetch();
+const realMembers = guildMembers
+  .filter(m => !m.user.bot)
+  .map(m => m.id);
+
+function getRandomMembers(amount) {
+  const shuffled = realMembers.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, amount);
+}
+
+if (chatTop.length === 0) {
+  const randomIds = getRandomMembers(jumlah);
+  chatTop = randomIds.map(id => [
+    id,
+    { chat: { [waktu]: 0 } }
+  ]);
+}
+
+if (voiceTop.length === 0) {
+  const randomIds = getRandomMembers(jumlah);
+  voiceTop = randomIds.map(id => [
+    id,
+    { voice: { [waktu]: 0 } }
+  ]);
+}
 
     const chatText = chatTop.map((u, i) =>
-      `${i + 1}. <@${u[0]}> — ${u[1].chat[waktu]} XP`
-    ).join("\n") || "Belum ada data.";
+  `${i + 1}. <@${u[0]}> — ${u[1].chat[waktu] || 0} XP`
+).join("\n");
 
-    const voiceText = voiceTop.map((u, i) =>
-      `${i + 1}. <@${u[0]}> — ${u[1].voice[waktu]} XP`
-    ).join("\n") || "Belum ada data.";
+const voiceText = voiceTop.map((u, i) =>
+  `${i + 1}. <@${u[0]}> — ${u[1].voice[waktu] || 0} XP`
+).join("\n");
 
     embed.addField("💬 Top Chat", chatText);
     embed.addField("🎧 Top Voice", voiceText);
