@@ -452,6 +452,8 @@ client.on("interactionCreate", async (interaction) => {
 
 if (interaction.commandName === "pmleaderboard") {
 
+  await interaction.deferReply();
+
   const kategori = interaction.options.getString("kategori");
   const waktu = interaction.options.getString("waktu") || "total";
   let jumlah = interaction.options.getInteger("jumlah");
@@ -584,7 +586,7 @@ const voiceText = voiceTop.map((u, i) =>
   );
 }
 
-  return interaction.reply({ embeds: [embed] });
+  return interaction.editReply({ embeds: [embed] });
 }
 
     if (interaction.commandName === "ping") return interaction.reply("pong");
