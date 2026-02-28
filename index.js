@@ -542,17 +542,45 @@ const voiceText = voiceTop.map((u, i) =>
 
   } else {
 
-    const top = getSorted(kategori);
+  let top = getSorted(kategori);
+  const targetAmount = jumlah;
 
-    const text = top.map((u, i) =>
-      `${i + 1}. <@${u[0]}> — ${u[1][kategori][waktu]} XP`
-    ).join("\n") || "Belum ada data.";
+  const guildMembers = await interaction.guild.members.fetch();
+  const realMembers = guildMembers
+    .filter(m => !m.user.bot)
+    .map(m => m.id);
 
-    embed.addField(
-      kategori === "chat" ? "💬 Top Chat" : "🎧 Top Voice",
-      text
-    );
+  function getRandomMembers(amount, exclude = []) {
+    const pool = realMembers.filter(id => !exclude.includes(id));
+    const shuffled = pool.sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, amount);
   }
+
+  if (top.length < targetAmount) {
+    const needed = targetAmount - top.length;
+    const existingIds = top.map(u => u[0]);
+    const randomIds = getRandomMembers(needed, existingIds);
+
+    const filler = randomIds.map(id => [
+      id,
+      {
+        chat: { [waktu]: 0 },
+        voice: { [waktu]: 0 }
+      }
+    ]);
+
+    top = [...top, ...filler];
+  }
+
+  const text = top.map((u, i) =>
+    `${i + 1}. <@${u[0]}> — ${u[1][kategori][waktu] || 0} XP`
+  ).join("\n");
+
+  embed.addField(
+    kategori === "chat" ? "💬 Top Chat" : "🎧 Top Voice",
+    text
+  );
+}
 
   return interaction.reply({ embeds: [embed] });
 }
