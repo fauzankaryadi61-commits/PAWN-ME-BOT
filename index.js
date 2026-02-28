@@ -204,20 +204,22 @@ client.once("ready", async () => {
       ]
     },
     {
-       name: "jumlah",
-       description: "Jumlah yang ditampilkan",
-       type: 4,
-       required: false,
-       choices: [
-         { name: "5", value: 5 },
-         { name: "10", value: 10 },
-         { name: "15", value: 15 }
-        ]
-    },
-    {
-       name: "pmconfig",
-       description: "Panel pengaturan sistem leveling Pawn Me"
-     }
+      name: "jumlah",
+      description: "Jumlah yang ditampilkan",
+      type: 4,
+      required: false,
+      choices: [
+        { name: "5", value: 5 },
+        { name: "10", value: 10 },
+        { name: "15", value: 15 }
+      ]
+    }
+  ]
+},
+{
+  name: "pmconfig",
+  description: "Panel pengaturan sistem leveling Pawn Me"
+}
     ]
 ];
 
