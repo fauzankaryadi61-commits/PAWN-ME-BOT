@@ -479,6 +479,47 @@ if (interaction.commandName === "pmleaderboard") {
     let chatTop = getSorted("chat");
     let voiceTop = getSorted("voice");
 
+const targetAmount = jumlah; // 5 atau 10 tergantung mode
+
+const guildMembers = await interaction.guild.members.fetch();
+const realMembers = guildMembers
+  .filter(m => !m.user.bot)
+  .map(m => m.id);
+
+function getRandomMembers(amount, exclude = []) {
+  const pool = realMembers.filter(id => !exclude.includes(id));
+  const shuffled = pool.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, amount);
+}
+
+// Paksa Chat jadi targetAmount
+if (chatTop.length < targetAmount) {
+  const needed = targetAmount - chatTop.length;
+  const existingIds = chatTop.map(u => u[0]);
+  const randomIds = getRandomMembers(needed, existingIds);
+
+  const randomData = randomIds.map(id => [
+    id,
+    { chat: { [waktu]: 0 } }
+  ]);
+
+  chatTop = [...chatTop, ...randomData];
+}
+
+// Paksa Voice jadi targetAmount
+if (voiceTop.length < targetAmount) {
+  const needed = targetAmount - voiceTop.length;
+  const existingIds = voiceTop.map(u => u[0]);
+  const randomIds = getRandomMembers(needed, existingIds);
+
+  const randomData = randomIds.map(id => [
+    id,
+    { voice: { [waktu]: 0 } }
+  ]);
+
+  voiceTop = [...voiceTop, ...randomData];
+}
+
 // Ambil member random kalau kosong
 const guildMembers = await interaction.guild.members.fetch();
 const realMembers = guildMembers
