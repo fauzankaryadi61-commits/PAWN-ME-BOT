@@ -1,0 +1,11 @@
+{
+  "name": "pawn-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "discord.js": "^13.16.0"
+  }
+}
