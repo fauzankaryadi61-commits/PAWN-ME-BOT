@@ -775,6 +775,37 @@ const voiceText = voiceTop.map((u, i) =>
   return interaction.showModal(modal);
 }
 
+  if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const newChatExp = parseInt(interaction.fields.getTextInputValue("chat_exp"));
+  const newVoiceExp = parseInt(interaction.fields.getTextInputValue("voice_exp"));
+  const newCooldown = parseInt(interaction.fields.getTextInputValue("chat_cooldown"));
+
+  if (isNaN(newChatExp) || isNaN(newVoiceExp) || isNaN(newCooldown)) {
+    return interaction.reply({ content: "Input harus berupa angka.", ephemeral: true });
+  }
+
+  config.chat_exp = newChatExp;
+  config.voice_exp_per_minute = newVoiceExp;
+  config.chat_cooldown = newCooldown;
+
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor("#3498DB")
+    .setTitle("✅ EXP Settings Updated")
+    .addField("Chat EXP", `${config.chat_exp}`, true)
+    .addField("Voice EXP / Min", `${config.voice_exp_per_minute}`, true)
+    .addField("Chat Cooldown", `${config.chat_cooldown} detik`, true)
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
+
   if (interaction.isButton() && interaction.customId === "open_saran") {
     const modal = new Modal()
       .setCustomId("modal_saran")
