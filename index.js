@@ -173,31 +173,35 @@ client.once("ready", async () => {
       ]
     },
     {
-      name: "pmleaderboard",
-      description: "Lihat leaderboard Pawn Me",
-      options: [
-        { name: "jumlah", description: "Jumlah top (default 10)", type: 4, required: false },
-    { 
-      name: "kategori", 
-      description: "Kategori", 
-      type: 3, 
+  name: "pmleaderboard",
+  description: "Lihat leaderboard Pawn Me",
+  options: [
+    {
+      name: "jumlah",
+      description: "Jumlah yang ditampilkan (default 10)",
+      type: 4,
+      required: false
+    },
+    {
+      name: "kategori",
+      description: "Kategori leaderboard",
+      type: 3,
       required: true,
       choices: [
-        { name: "chat", value: "chat" },
-        { name: "voice", value: "voice" },
-        { name: "combined", value: "combined" }
+        { name: "Chat", value: "chat" },
+        { name: "Voice", value: "voice" }
       ]
     },
-    { 
-      name: "waktu", 
-      description: "Periode waktu", 
-      type: 3, 
+    {
+      name: "waktu",
+      description: "Periode waktu",
+      type: 3,
       required: true,
       choices: [
-        { name: "total", value: "total" },
-        { name: "month", value: "month" },
-        { name: "week", value: "week" },
-        { name: "day", value: "day" }
+        { name: "All Time", value: "total" },
+        { name: "Month", value: "month" },
+        { name: "Week", value: "week" },
+        { name: "Day", value: "day" }
       ]
     }
   ]
