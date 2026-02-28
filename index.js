@@ -735,6 +735,46 @@ const voiceText = voiceTop.map((u, i) =>
 
 }
 
+  if (interaction.customId === "config_exp") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const modal = new Modal()
+    .setCustomId("modal_exp_settings")
+    .setTitle("Edit EXP Settings");
+
+  const chatExpInput = new TextInputComponent()
+    .setCustomId("chat_exp")
+    .setLabel("Chat EXP per pesan")
+    .setStyle("SHORT")
+    .setValue(String(config.chat_exp))
+    .setRequired(true);
+
+  const voiceExpInput = new TextInputComponent()
+    .setCustomId("voice_exp")
+    .setLabel("Voice EXP per menit")
+    .setStyle("SHORT")
+    .setValue(String(config.voice_exp_per_minute))
+    .setRequired(true);
+
+  const cooldownInput = new TextInputComponent()
+    .setCustomId("chat_cooldown")
+    .setLabel("Chat Cooldown (detik)")
+    .setStyle("SHORT")
+    .setValue(String(config.chat_cooldown))
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(chatExpInput),
+    new MessageActionRow().addComponents(voiceExpInput),
+    new MessageActionRow().addComponents(cooldownInput)
+  );
+
+  return interaction.showModal(modal);
+}
+
   if (interaction.isButton() && interaction.customId === "open_saran") {
     const modal = new Modal()
       .setCustomId("modal_saran")
