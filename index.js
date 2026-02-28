@@ -199,11 +199,15 @@ client.once("ready", async () => {
       ]
     },
     {
-      name: "jumlah",
-      description: "Jumlah yang ditampilkan (default 10)",
-      type: 4,
-      required: false
-    }
+  name: "jumlah",
+  description: "Jumlah yang ditampilkan",
+  type: 4,
+  required: false,
+  choices: [
+    { name: "5", value: 5 },
+    { name: "10", value: 10 },
+    { name: "15", value: 15 },
+    { name: "20", value: 20 }
   ]
 }
   ];
