@@ -180,7 +180,7 @@ client.once("ready", async () => {
       name: "kategori",
       description: "Kategori leaderboard",
       type: 3,
-      required: true,
+      required: false,
       choices: [
         { name: "Chat", value: "chat" },
         { name: "Voice", value: "voice" }
@@ -190,7 +190,7 @@ client.once("ready", async () => {
       name: "waktu",
       description: "Periode waktu",
       type: 3,
-      required: true,
+      required: false,
       choices: [
         { name: "All Time", value: "total" },
         { name: "Month", value: "month" },
