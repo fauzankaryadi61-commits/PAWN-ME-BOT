@@ -709,6 +709,32 @@ const voiceText = voiceTop.map((u, i) =>
     }
   }
 
+  if (interaction.isButton()) {
+
+  if (interaction.customId === "config_double") {
+
+    if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+      return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+    }
+
+    config.double_exp = !config.double_exp;
+    saveConfig();
+
+    const embed = new MessageEmbed()
+      .setColor(config.double_exp ? "#2ECC71" : "#E74C3C")
+      .setTitle("⚡ Double EXP Updated")
+      .setDescription(
+        config.double_exp
+          ? "Double EXP sekarang **AKTIF**."
+          : "Double EXP sekarang **NONAKTIF**."
+      )
+      .setTimestamp();
+
+    return interaction.reply({ embeds: [embed], ephemeral: true });
+  }
+
+}
+
   if (interaction.isButton() && interaction.customId === "open_saran") {
     const modal = new Modal()
       .setCustomId("modal_saran")
