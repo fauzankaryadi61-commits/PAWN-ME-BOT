@@ -6,5 +6,6 @@
   "booster_multiplier": 1.5,
   "double_exp": false,
   "double_exp_multiplier": 2,
-  "role_rewards_enabled": false
+  "role_rewards_enabled": false,
+  "monthly_scheduler_enabled": true 
 }
