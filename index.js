@@ -711,6 +711,30 @@ const voiceText = voiceTop.map((u, i) =>
 
   if (interaction.isButton()) {
 
+  if (interaction.customId === "config_booster") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const modal = new Modal()
+    .setCustomId("modal_booster_settings")
+    .setTitle("Edit Booster Multiplier");
+
+  const boosterInput = new TextInputComponent()
+    .setCustomId("booster_multiplier")
+    .setLabel("Booster Multiplier (contoh: 1.5)")
+    .setStyle("SHORT")
+    .setValue(String(config.booster_multiplier))
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(boosterInput)
+  );
+
+  return interaction.showModal(modal);
+}
+
   if (interaction.customId === "config_double") {
 
     if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -773,6 +797,32 @@ const voiceText = voiceTop.map((u, i) =>
   );
 
   return interaction.showModal(modal);
+}
+
+  if (interaction.isModalSubmit() && interaction.customId === "modal_booster_settings") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const newMultiplier = parseFloat(
+    interaction.fields.getTextInputValue("booster_multiplier")
+  );
+
+  if (isNaN(newMultiplier) || newMultiplier <= 0) {
+    return interaction.reply({ content: "Input harus angka lebih dari 0.", ephemeral: true });
+  }
+
+  config.booster_multiplier = newMultiplier;
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor("#9B59B6")
+    .setTitle("🚀 Booster Multiplier Updated")
+    .setDescription(`Multiplier sekarang: **${config.booster_multiplier}x**`)
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
   if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
