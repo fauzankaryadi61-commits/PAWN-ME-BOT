@@ -742,6 +742,46 @@ const voiceText = voiceTop.map((u, i) =>
 
   if (interaction.isButton()) {
 
+  if (interaction.customId === "config_exp") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const modal = new Modal()
+    .setCustomId("modal_exp_settings")
+    .setTitle("Edit EXP Settings");
+
+  const chatExpInput = new TextInputComponent()
+    .setCustomId("chat_exp")
+    .setLabel("Chat EXP per pesan")
+    .setStyle("SHORT")
+    .setValue(String(config.chat_exp))
+    .setRequired(true);
+
+  const voiceExpInput = new TextInputComponent()
+    .setCustomId("voice_exp")
+    .setLabel("Voice EXP per menit")
+    .setStyle("SHORT")
+    .setValue(String(config.voice_exp_per_minute))
+    .setRequired(true);
+
+  const cooldownInput = new TextInputComponent()
+    .setCustomId("chat_cooldown")
+    .setLabel("Chat Cooldown (detik)")
+    .setStyle("SHORT")
+    .setValue(String(config.chat_cooldown))
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(chatExpInput),
+    new MessageActionRow().addComponents(voiceExpInput),
+    new MessageActionRow().addComponents(cooldownInput)
+  );
+
+  return interaction.showModal(modal);
+}
+
   if (interaction.customId === "config_levelup") {
 
   if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -832,72 +872,6 @@ return interaction.reply({ embeds: [embed], ephemeral: true });
     return interaction.reply({ embeds: [embed], ephemeral: true });
   }
 
-}
-
-  if (interaction.customId === "config_exp") {
-
-  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
-  }
-
-  const modal = new Modal()
-    .setCustomId("modal_exp_settings")
-    .setTitle("Edit EXP Settings");
-
-  const chatExpInput = new TextInputComponent()
-    .setCustomId("chat_exp")
-    .setLabel("Chat EXP per pesan")
-    .setStyle("SHORT")
-    .setValue(String(config.chat_exp))
-    .setRequired(true);
-
-  const voiceExpInput = new TextInputComponent()
-    .setCustomId("voice_exp")
-    .setLabel("Voice EXP per menit")
-    .setStyle("SHORT")
-    .setValue(String(config.voice_exp_per_minute))
-    .setRequired(true);
-
-  const cooldownInput = new TextInputComponent()
-    .setCustomId("chat_cooldown")
-    .setLabel("Chat Cooldown (detik)")
-    .setStyle("SHORT")
-    .setValue(String(config.chat_cooldown))
-    .setRequired(true);
-
-  modal.addComponents(
-    new MessageActionRow().addComponents(chatExpInput),
-    new MessageActionRow().addComponents(voiceExpInput),
-    new MessageActionRow().addComponents(cooldownInput)
-  );
-
-  return interaction.showModal(modal);
-}
-
-  if (interaction.isModalSubmit() && interaction.customId === "modal_booster_settings") {
-
-  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
-    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
-  }
-
-  const newMultiplier = parseFloat(
-    interaction.fields.getTextInputValue("booster_multiplier")
-  );
-
-  if (isNaN(newMultiplier) || newMultiplier <= 0) {
-    return interaction.reply({ content: "Input harus angka lebih dari 0.", ephemeral: true });
-  }
-
-  config.booster_multiplier = newMultiplier;
-  saveConfig();
-
-  const embed = new MessageEmbed()
-    .setColor("#9B59B6")
-    .setTitle("🚀 Booster Multiplier Updated")
-    .setDescription(`Multiplier sekarang: **${config.booster_multiplier}x**`)
-    .setTimestamp();
-
-  return interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
   if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
