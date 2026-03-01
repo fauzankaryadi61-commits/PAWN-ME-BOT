@@ -219,7 +219,11 @@ client.once("ready", async () => {
 {
     name: "pmconfig",
     description: "Panel pengaturan sistem leveling Pawn Me"
-  }
+  },
+  {
+    name: "pmmonthly",
+    description: "Trigger monthly leaderboard manual"
+}
 
 ];
 
@@ -597,6 +601,17 @@ const voiceText = voiceTop.map((u, i) =>
   return interaction.editReply({ embeds: [embed] });
 }
 
+    if (interaction.commandName === "pmmonthly") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  await interaction.reply({ content: "Manual monthly leaderboard dijalankan.", ephemeral: true });
+
+  // Panggil ulang logic leaderboard monthly di sini
+}
+
     if (interaction.commandName === "pmconfig") {
 
   if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
@@ -633,6 +648,10 @@ const voiceText = voiceTop.map((u, i) =>
       .setCustomId("config_role")
       .setLabel("Role Reward")
       .setStyle("DANGER")
+    new MessageButton()
+      .setCustomId("config_scheduler")
+      .setLabel("Scheduler")
+      .setStyle("SECONDARY"),
   );
 
   return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
@@ -710,6 +729,28 @@ const voiceText = voiceTop.map((u, i) =>
   }
 
   if (interaction.isButton()) {
+
+  if (interaction.customId === "config_scheduler") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  config.monthly_scheduler_enabled = !config.monthly_scheduler_enabled;
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor(config.monthly_scheduler_enabled ? "#2ECC71" : "#E74C3C")
+    .setTitle("📅 Monthly Scheduler Updated")
+    .setDescription(
+      config.monthly_scheduler_enabled
+        ? "Auto Monthly Leaderboard sekarang **AKTIF**."
+        : "Auto Monthly Leaderboard sekarang **NONAKTIF**."
+    )
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
 
   if (interaction.customId === "config_booster") {
 
@@ -939,6 +980,8 @@ const voiceText = voiceTop.map((u, i) =>
 // ================= LEVEL LEADERBOARD ================= \\
 
   setInterval(async () => {
+
+  if (!config.monthly_scheduler_enabled) return;
 
   const now = new Date();
   if (now.getDate() !== 1 || now.getHours() !== 0) return;
