@@ -737,19 +737,19 @@ const voiceText = voiceTop.map((u, i) =>
   }
 
   config.monthly_scheduler_enabled = !config.monthly_scheduler_enabled;
-  saveConfig();
+saveConfig();
 
-  const embed = new MessageEmbed()
-    .setColor(config.monthly_scheduler_enabled ? "#2ECC71" : "#E74C3C")
-    .setTitle("📅 Monthly Scheduler Updated")
-    .setDescription(
-      config.monthly_scheduler_enabled
-        ? "Auto Monthly Leaderboard sekarang **AKTIF**."
-        : "Auto Monthly Leaderboard sekarang **NONAKTIF**."
-    )
-    .setTimestamp();
+const statusText = config.monthly_scheduler_enabled
+  ? "Manual monthly leaderboard ON"
+  : "Manual monthly leaderboard OFF";
 
-  return interaction.reply({ embeds: [embed], ephemeral: true });
+const embed = new MessageEmbed()
+  .setColor(config.monthly_scheduler_enabled ? "#2ECC71" : "#E74C3C")
+  .setTitle("📅 Monthly Leaderboard Control")
+  .setDescription(`Status: **${statusText}**`)
+  .setTimestamp();
+
+return interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
   if (interaction.customId === "config_booster") {
