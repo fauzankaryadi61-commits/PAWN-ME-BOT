@@ -22,7 +22,7 @@ const BOOSTER_ROLE_ID = "1469588025288823019";
 const MAX_STRIKE = 3;
 const TIMEOUT_DURATION = 10 * 60 * 1000;
 
-const badWords = ["anjing", "anj", "bgst", "goblok", "kntl", "gblk", "bego", "mmk", "jing", "puki", "bangsat", "kontol", "memek", "babi"];
+const badWords = ["anjing", "bgst", "goblok", "kntl", "gblk", "bego", "mmk", "jing", "puki", "bangsat", "kontol", "memek", "babi"];
 let strikes = {};
 const fs = require("fs");
 
