@@ -7,5 +7,7 @@
   "double_exp": false,
   "double_exp_multiplier": 2,
   "role_rewards_enabled": false,
-  "monthly_scheduler_enabled": true 
+  "monthly_scheduler_enabled": true,
+  "level_up_enabled": true,
+  "level_up_channel": "LEVEL_UP_CHANNEL_ID"
 }
