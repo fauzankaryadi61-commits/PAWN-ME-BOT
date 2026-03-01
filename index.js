@@ -65,26 +65,31 @@ function calculateLevel(exp) {
 }
 
 async function checkLevelUp(member, oldExp, newExp) {
+
+  if (!config.level_up_enabled) return;
+
   const oldLevel = calculateLevel(oldExp);
   const newLevel = calculateLevel(newExp);
 
   if (newLevel <= oldLevel) return;
 
-  const channel = member.guild.channels.cache.get(LEVEL_UP_CHANNEL);
+  const channel = member.guild.channels.cache.get(config.level_up_channel);
   if (!channel) return;
 
   const embed = new MessageEmbed()
     .setColor("#2ECC71")
     .setTitle("🎉 LEVEL UP!")
-    .setDescription(`${member} naik ke **Level ${newLevel}** 🚀`)
+    .setDescription(
+      config.level_up_mention
+        ? `${member} naik ke **Level ${newLevel}** 🚀`
+        : `User ${member.user.tag} naik ke Level ${newLevel}`
+    )
     .addField("Level Sebelumnya", `${oldLevel}`, true)
     .addField("Level Sekarang", `${newLevel}`, true)
-    .setFooter({ text: "Pawn Me Level System" })
+    .setFooter({ text: "Pawn Me Premium Level System" })
     .setTimestamp();
 
-  const msg = await channel.send({ embeds: [embed] });
-  await msg.react("🎉");
-  await msg.react("🔥");
+  await channel.send({ embeds: [embed] });
 }
 
 const cooldowns = new Map();
@@ -627,6 +632,9 @@ const voiceText = voiceTop.map((u, i) =>
     .addField("Chat Cooldown", `${config.chat_cooldown} detik`, true)
     .addField("Booster Multiplier", `${config.booster_multiplier}x`, true)
     .addField("Double EXP", config.double_exp ? "Aktif" : "Nonaktif", true)
+    .addField("Level Up", config.level_up_enabled ? "Aktif" : "Nonaktif", true)
+    .addField("Level Up Channel", `<#${config.level_up_channel}>`, true)
+    .addField("Level Up Mention", config.level_up_mention ? "On" : "Off", true)
     .addField("Role Reward", config.role_rewards_enabled ? "Aktif" : "Nonaktif", true)
     .setFooter({ text: "Pawn Me Premium Level System" })
     .setTimestamp();
@@ -651,6 +659,10 @@ const voiceText = voiceTop.map((u, i) =>
     new MessageButton()
       .setCustomId("config_scheduler")
       .setLabel("Scheduler")
+      .setStyle("SECONDARY"),
+    new MessageButton()
+      .setCustomId("config_levelup")
+      .setLabel("Level Up")
       .setStyle("SECONDARY"),
   );
 
@@ -729,6 +741,28 @@ const voiceText = voiceTop.map((u, i) =>
   }
 
   if (interaction.isButton()) {
+
+  if (interaction.customId === "config_levelup") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  config.level_up_enabled = !config.level_up_enabled;
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor(config.level_up_enabled ? "#2ECC71" : "#E74C3C")
+    .setTitle("🎉 Level Up Notification")
+    .setDescription(
+      config.level_up_enabled
+        ? "Level Up sekarang **AKTIF**."
+        : "Level Up sekarang **NONAKTIF**."
+    )
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
 
   if (interaction.customId === "config_scheduler") {
 
