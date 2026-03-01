@@ -9,5 +9,6 @@
   "role_rewards_enabled": false,
   "monthly_scheduler_enabled": true,
   "level_up_enabled": true,
-  "level_up_channel": "LEVEL_UP_CHANNEL_ID"
+  "level_up_channel": "1477220362747117658",
+  "level_up_mention": true
 }
