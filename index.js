@@ -639,34 +639,41 @@ const voiceText = voiceTop.map((u, i) =>
     .setFooter({ text: "Pawn Me Premium Level System" })
     .setTimestamp();
 
-  const row = new MessageActionRow().addComponents(
-    new MessageButton()
-      .setCustomId("config_exp")
-      .setLabel("EXP Settings")
-      .setStyle("PRIMARY"),
-    new MessageButton()
-      .setCustomId("config_double")
-      .setLabel("Double EXP")
-      .setStyle("SUCCESS"),
-    new MessageButton()
-      .setCustomId("config_booster")
-      .setLabel("Booster")
-      .setStyle("SECONDARY"),
-    new MessageButton()
-      .setCustomId("config_role")
-      .setLabel("Role Reward")
-      .setStyle("DANGER"),
-    new MessageButton()
-      .setCustomId("config_scheduler")
-      .setLabel("Scheduler")
-      .setStyle("SECONDARY"),
-    new MessageButton()
-      .setCustomId("config_levelup")
-      .setLabel("Level Up")
-      .setStyle("SECONDARY"),
-  );
+  const row1 = new MessageActionRow().addComponents(
+  new MessageButton()
+    .setCustomId("config_exp")
+    .setLabel("EXP Settings")
+    .setStyle("PRIMARY"),
+  new MessageButton()
+    .setCustomId("config_double")
+    .setLabel("Double EXP")
+    .setStyle("SUCCESS"),
+  new MessageButton()
+    .setCustomId("config_booster")
+    .setLabel("Booster")
+    .setStyle("SECONDARY"),
+  new MessageButton()
+    .setCustomId("config_role")
+    .setLabel("Role Reward")
+    .setStyle("DANGER"),
+  new MessageButton()
+    .setCustomId("config_scheduler")
+    .setLabel("Scheduler")
+    .setStyle("SECONDARY")
+);
 
-  return interaction.reply({ embeds: [embed], components: [row], ephemeral: true });
+const row2 = new MessageActionRow().addComponents(
+  new MessageButton()
+    .setCustomId("config_levelup")
+    .setLabel("Level Up")
+    .setStyle("SECONDARY")
+);
+
+  return interaction.reply({
+  embeds: [embed],
+  components: [row1, row2],
+  ephemeral: true
+});
 }
     
     if (interaction.commandName === "ping") return interaction.reply("pong");
