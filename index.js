@@ -647,7 +647,7 @@ const voiceText = voiceTop.map((u, i) =>
     new MessageButton()
       .setCustomId("config_role")
       .setLabel("Role Reward")
-      .setStyle("DANGER")
+      .setStyle("DANGER"),
     new MessageButton()
       .setCustomId("config_scheduler")
       .setLabel("Scheduler")
