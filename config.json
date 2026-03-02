@@ -10,5 +10,10 @@
   "monthly_scheduler_enabled": true,
   "level_up_enabled": true,
   "level_up_channel": "1477220362747117658",
-  "level_up_mention": true
+  "level_up_mention": true,
+  "role_rewards": {
+  "5": "ROLE_ID_LEVEL_5",
+  "10": "ROLE_ID_LEVEL_10",
+  "20": "ROLE_ID_LEVEL_20"
+}
 }
