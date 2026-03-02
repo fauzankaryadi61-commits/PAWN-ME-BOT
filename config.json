@@ -8,9 +8,9 @@
   "double_exp_multiplier": 2,
   "role_rewards_enabled": false,
   "monthly_scheduler_enabled": true,
-  "level_up_enabled": true,
+  "level_up_enabled": false,
   "level_up_channel": "1477220362747117658",
-  "level_up_mention": true,
+  "level_up_mention": false,
   "role_rewards": {
   "5": "ROLE_ID_LEVEL_5",
   "10": "ROLE_ID_LEVEL_10",
