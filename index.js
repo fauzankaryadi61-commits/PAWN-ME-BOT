@@ -73,6 +73,26 @@ async function checkLevelUp(member, oldExp, newExp) {
 
   if (newLevel <= oldLevel) return;
 
+// ================= ROLE REWARD =================
+
+if (config.role_rewards_enabled && config.role_rewards) {
+
+  const rewards = config.role_rewards;
+
+  for (const level in rewards) {
+
+    if (newLevel >= parseInt(level) && oldLevel < parseInt(level)) {
+
+      const roleId = rewards[level];
+      const role = member.guild.roles.cache.get(roleId);
+
+      if (role && !member.roles.cache.has(roleId)) {
+        await member.roles.add(role).catch(() => {});
+      }
+    }
+  }
+}
+
   const channel = member.guild.channels.cache.get(config.level_up_channel);
   if (!channel) return;
 
@@ -855,6 +875,28 @@ return interaction.reply({ embeds: [embed], ephemeral: true });
   );
 
   return interaction.showModal(modal);
+}
+
+if (interaction.customId === "config_role") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  config.role_rewards_enabled = !config.role_rewards_enabled;
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor(config.role_rewards_enabled ? "#2ECC71" : "#E74C3C")
+    .setTitle("🎖 Role Reward System")
+    .setDescription(
+      config.role_rewards_enabled
+        ? "Role Reward sekarang **AKTIF**."
+        : "Role Reward sekarang **NONAKTIF**."
+    )
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
   if (interaction.customId === "config_double") {
