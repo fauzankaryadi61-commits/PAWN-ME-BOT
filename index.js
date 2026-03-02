@@ -501,13 +501,24 @@ function roundRect(ctx, x, y, width, height, radius, fillColor) {
   const canvas = createCanvas(width, height);
   const ctx = canvas.getContext("2d");
 
-  // === Background ===
-  const background = await loadImage("https://i.imgur.com/8Km9tLL.png"); // ganti dengan banner final kamu
-  ctx.drawImage(background, 0, 0, width, height);
+  // Background
+const background = await loadImage("./assets/pmbot-banner.png");
+ctx.drawImage(background, 0, 0, width, height);
 
-  // Glass panel
-ctx.fillStyle = "rgba(15, 15, 30, 0.75)";
-ctx.fillRect(40, 40, width - 80, height - 80);
+// (Optional) subtle gradient overlay kalau kamu pakai
+const overlay = ctx.createLinearGradient(0, 0, 0, height);
+overlay.addColorStop(0, "rgba(0,0,0,0.2)");
+overlay.addColorStop(1, "rgba(0,0,0,0.5)");
+ctx.fillStyle = overlay;
+ctx.fillRect(0, 0, width, height);
+
+// Glass panel
+roundRect(ctx, 40, 40, width - 80, height - 80, 30, "rgba(10,10,30,0.55)");
+
+  ctx.strokeStyle = "rgba(120, 180, 255, 0.4)";
+ctx.lineWidth = 2;
+roundRect(ctx, 40, 40, width - 80, height - 80, 30, "transparent");
+ctx.stroke();
 
 // Border tipis glow
 ctx.strokeStyle = "rgba(120, 150, 255, 0.5)";
@@ -556,8 +567,11 @@ ctx.fill();
   ctx.fillText(`RANK #${rank}`, 300, 90);
 
   ctx.font = "28px Sans";
-ctx.fillStyle = "#1ABC9C";
+ctx.fillStyle = "#00E5FF";
+ctx.shadowColor = "#00E5FF";
+ctx.shadowBlur = 15;
 ctx.fillText(`LEVEL ${level}`, 780, 90);
+ctx.shadowBlur = 0;
 
   // Username
   ctx.fillStyle = "#FFFFFF";
@@ -577,7 +591,21 @@ ctx.fillText(`LEVEL ${level}`, 780, 90);
   const barY = 210;
 
   roundRect(ctx, barX, barY, barWidth, barHeight, 20, "#2C2F33");
-roundRect(ctx, barX, barY, barWidth * progress, barHeight, 20, "#1ABC9C");
+
+// Gradient
+const gradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+gradient.addColorStop(0, "#1ABC9C");
+gradient.addColorStop(1, "#00E5FF");
+
+// Glow
+ctx.shadowColor = "#00E5FF";
+ctx.shadowBlur = 20;
+
+// Fill
+roundRect(ctx, barX, barY, barWidth * progress, barHeight, 20, gradient);
+
+// Reset shadow
+ctx.shadowBlur = 0;
 
   return canvas.toBuffer();
 }
