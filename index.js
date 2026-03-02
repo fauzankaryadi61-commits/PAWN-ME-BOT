@@ -883,20 +883,28 @@ if (interaction.customId === "config_role") {
     return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
   }
 
-  config.role_rewards_enabled = !config.role_rewards_enabled;
-  saveConfig();
+  const modal = new Modal()
+    .setCustomId("modal_role_reward")
+    .setTitle("Set Role Reward");
 
-  const embed = new MessageEmbed()
-    .setColor(config.role_rewards_enabled ? "#2ECC71" : "#E74C3C")
-    .setTitle("🎖 Role Reward System")
-    .setDescription(
-      config.role_rewards_enabled
-        ? "Role Reward sekarang **AKTIF**."
-        : "Role Reward sekarang **NONAKTIF**."
-    )
-    .setTimestamp();
+  const levelInput = new TextInputComponent()
+    .setCustomId("reward_level")
+    .setLabel("Level (contoh: 5)")
+    .setStyle("SHORT")
+    .setRequired(true);
 
-  return interaction.reply({ embeds: [embed], ephemeral: true });
+  const roleInput = new TextInputComponent()
+    .setCustomId("reward_role_id")
+    .setLabel("Role ID")
+    .setStyle("SHORT")
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(levelInput),
+    new MessageActionRow().addComponents(roleInput)
+  );
+
+  return interaction.showModal(modal);
 }
 
   if (interaction.customId === "config_double") {
@@ -924,6 +932,43 @@ if (interaction.customId === "config_role") {
 }
 
   if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
+
+  if (interaction.isModalSubmit() && interaction.customId === "modal_role_reward") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  const level = interaction.fields.getTextInputValue("reward_level");
+  const roleId = interaction.fields.getTextInputValue("reward_role_id");
+
+  if (isNaN(level)) {
+    return interaction.reply({ content: "Level harus angka.", ephemeral: true });
+  }
+
+  const role = interaction.guild.roles.cache.get(roleId);
+
+  if (!role) {
+    return interaction.reply({ content: "Role ID tidak ditemukan.", ephemeral: true });
+  }
+
+  if (!config.role_rewards) {
+    config.role_rewards = {};
+  }
+
+  config.role_rewards[level] = roleId;
+  config.role_rewards_enabled = true;
+
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor("#2ECC71")
+    .setTitle("🎖 Role Reward Updated")
+    .setDescription(`Level **${level}** sekarang akan mendapatkan role <@&${roleId}>`)
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
 
   if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
     return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
