@@ -698,10 +698,6 @@ const voiceText = voiceTop.map((u, i) =>
     .setCustomId("config_scheduler")
     .setLabel("Scheduler")
     .setStyle("SECONDARY"),
-  new MessageButton()
-    .setCustomId("config_rankmode")
-    .setLabel("Rank Mode")
-    .setStyle("SECONDARY")
 );
 
 const row2 = new MessageActionRow().addComponents(
@@ -712,7 +708,7 @@ const row2 = new MessageActionRow().addComponents(
   new MessageButton()
     .setCustomId("config_rankmode")
     .setLabel("Rank Mode")
-    .setStyle("SECONDARY")
+    .setStyle("SECONDARY"),
 );
 
   return interaction.reply({
