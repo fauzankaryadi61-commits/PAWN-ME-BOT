@@ -9,6 +9,9 @@ const {
   MessageEmbed
 } = require("discord.js");
 
+const { createCanvas, loadImage } = require("canvas");
+const { MessageAttachment } = require("discord.js");
+
 const TOKEN = process.env.TOKEN;
 const GUILD_ID = process.env.GUILD_ID;
 
@@ -472,6 +475,84 @@ Semoga betah ya dan jangan malu malu untuk sapa sapa juga membahas hal randomðŸ
 `);
 });
 
+/* ================= LEVEL CARD ================= */
+
+async function generateLevelCard(member, totalExp, rank) {
+
+  const width = 1000;
+  const height = 350;
+
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext("2d");
+
+  // === Background ===
+  const background = await loadImage("https://i.imgur.com/8Km9tLL.png"); // ganti dengan banner final kamu
+  ctx.drawImage(background, 0, 0, width, height);
+
+  // Overlay dark glass
+  ctx.fillStyle = "rgba(0,0,0,0.65)";
+  ctx.fillRect(0, 0, width, height);
+
+  // === Hitung Level ===
+  const level = Math.floor(0.1 * Math.sqrt(totalExp));
+  const nextLevelExp = Math.pow((level + 1) / 0.1, 2);
+  const currentLevelExp = Math.pow(level / 0.1, 2);
+
+  const currentXP = Math.floor(totalExp - currentLevelExp);
+  const requiredXP = Math.floor(nextLevelExp - currentLevelExp);
+
+  const progress = currentXP / requiredXP;
+
+  // === Avatar ===
+  const avatar = await loadImage(
+    member.user.displayAvatarURL({ format: "png", size: 256 })
+  );
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(140, 175, 90, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(avatar, 50, 85, 180, 180);
+  ctx.restore();
+
+  // === Text Settings ===
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "24px Sans";
+  ctx.fillText(`RANK #${rank}`, 300, 90);
+
+  ctx.font = "24px Sans";
+  ctx.fillStyle = "#1ABC9C";
+  ctx.fillText(`LEVEL ${level}`, 780, 90);
+
+  // Username
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "32px Sans";
+  ctx.fillText(member.user.username, 300, 160);
+
+  // XP Right Aligned (P sejajar dengan level)
+  ctx.font = "22px Sans";
+  ctx.textAlign = "right";
+  ctx.fillText(`${currentXP} / ${requiredXP} XP`, 950, 160);
+  ctx.textAlign = "left";
+
+  // === Progress Bar ===
+  const barWidth = 650;
+  const barHeight = 30;
+  const barX = 300;
+  const barY = 210;
+
+  // Background
+  ctx.fillStyle = "#2C2F33";
+  ctx.fillRect(barX, barY, barWidth, barHeight);
+
+  // Fill
+  ctx.fillStyle = "#1ABC9C";
+  ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+
+  return canvas.toBuffer();
+}
+
 /* ================= INTERACTION ================= */
 
 client.on("interactionCreate", async (interaction) => {
@@ -482,26 +563,31 @@ client.on("interactionCreate", async (interaction) => {
     
     if (interaction.commandName === "pmlevel") {
   const user = interaction.options.getUser("user") || interaction.user;
-  const data = levels[user.id];
+const data = levels[user.id];
 
-  if (!data) {
-    return interaction.reply({ content: "User belum memiliki data level.", ephemeral: true });
-  }
+if (!data) {
+  return interaction.reply({ content: "User belum memiliki data level.", ephemeral: true });
+}
 
-  const totalExp = data.chat.total + data.voice.total;
-  const level = Math.floor(0.1 * Math.sqrt(totalExp));
+const totalExp = data.chat.total + data.voice.total;
 
-  const embed = new MessageEmbed()
-    .setColor("#9B59B6")
-    .setTitle("ðŸŽ® Pawn Me Level")
-    .addField("User", user.tag, true)
-    .addField("Level", `${level}`, true)
-    .addField("Total EXP", `${totalExp}`, true)
-    .addField("Chat EXP", `${data.chat.total}`, true)
-    .addField("Voice EXP", `${data.voice.total}`, true)
-    .setTimestamp();
+// Hitung rank global
+const sorted = Object.entries(levels)
+  .map(([id, d]) => ({
+    id,
+    total: d.chat.total + d.voice.total
+  }))
+  .sort((a, b) => b.total - a.total);
 
-  return interaction.reply({ embeds: [embed] });
+const rank = sorted.findIndex(u => u.id === user.id) + 1;
+
+const member = await interaction.guild.members.fetch(user.id);
+
+const buffer = await generateLevelCard(member, totalExp, rank);
+
+const attachment = new MessageAttachment(buffer, "pm-level.png");
+
+return interaction.reply({ files: [attachment] });
 }
 
 if (interaction.commandName === "pmleaderboard") {
