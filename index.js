@@ -702,13 +702,19 @@ const voiceText = voiceTop.map((u, i) =>
 
 const row2 = new MessageActionRow().addComponents(
   new MessageButton()
-    .setCustomId("config_levelup")
-    .setLabel("Level Up")
-    .setStyle("SECONDARY"),
-  new MessageButton()
     .setCustomId("config_rankmode")
     .setLabel("Rank Mode")
     .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_levelup")
+    .setLabel("Level Up")
+    .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_manage_rewards")
+    .setLabel("Manage Rewards")
+    .setStyle("PRIMARY")
 );
 
   return interaction.reply({
@@ -826,6 +832,68 @@ const row2 = new MessageActionRow().addComponents(
     new MessageActionRow().addComponents(chatExpInput),
     new MessageActionRow().addComponents(voiceExpInput),
     new MessageActionRow().addComponents(cooldownInput)
+  );
+
+  return interaction.showModal(modal);
+}
+
+if (interaction.customId === "config_manage_rewards") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  if (!config.role_rewards || Object.keys(config.role_rewards).length === 0) {
+    return interaction.reply({
+      content: "Belum ada role reward yang terdaftar.",
+      ephemeral: true
+    });
+  }
+
+  const sorted = Object.keys(config.role_rewards)
+    .map(l => parseInt(l))
+    .sort((a, b) => a - b);
+
+  const listText = sorted.map(level => {
+    const roleId = config.role_rewards[level];
+    return `Level ${level} → <@&${roleId}>`;
+  }).join("\n");
+
+  const embed = new MessageEmbed()
+    .setColor("#F1C40F")
+    .setTitle("🎖 Role Reward List")
+    .setDescription(listText)
+    .setFooter({ text: "Gunakan modal untuk hapus reward tertentu" })
+    .setTimestamp();
+
+  const row = new MessageActionRow().addComponents(
+    new MessageButton()
+      .setCustomId("config_remove_reward")
+      .setLabel("Remove Reward")
+      .setStyle("DANGER")
+  );
+
+  return interaction.reply({
+    embeds: [embed],
+    components: [row],
+    ephemeral: true
+  });
+}
+
+if (interaction.customId === "config_remove_reward") {
+
+  const modal = new Modal()
+    .setCustomId("modal_remove_reward")
+    .setTitle("Remove Role Reward");
+
+  const levelInput = new TextInputComponent()
+    .setCustomId("remove_level")
+    .setLabel("Masukkan level yang ingin dihapus")
+    .setStyle("SHORT")
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(levelInput)
   );
 
   return interaction.showModal(modal);
@@ -975,6 +1043,28 @@ if (interaction.customId === "config_role") {
 
 }
 
+if (interaction.isModalSubmit() && interaction.customId === "modal_remove_reward") {
+
+  const level = interaction.fields.getTextInputValue("remove_level");
+
+  if (!config.role_rewards[level]) {
+    return interaction.reply({
+      content: "Level tersebut tidak memiliki role reward.",
+      ephemeral: true
+    });
+  }
+
+  delete config.role_rewards[level];
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor("#E74C3C")
+    .setTitle("🗑 Role Reward Removed")
+    .setDescription(`Reward untuk level ${level} berhasil dihapus.`)
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
+}
 
   if (interaction.isModalSubmit() && interaction.customId === "modal_role_reward") {
 
