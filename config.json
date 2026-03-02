@@ -7,6 +7,7 @@
   "double_exp": false,
   "double_exp_multiplier": 2,
   "role_rewards_enabled": false,
+  "rank_mode_enabled": false,
   "monthly_scheduler_enabled": true,
   "level_up_enabled": false,
   "level_up_channel": "1477220362747117658",
