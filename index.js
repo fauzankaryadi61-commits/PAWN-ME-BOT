@@ -701,7 +701,7 @@ const voiceText = voiceTop.map((u, i) =>
   new MessageButton()
     .setCustomId("config_rankmode")
     .setLabel("Rank Mode")
-    .setStyle("SECONDARY"),
+    .setStyle("SECONDARY")
 );
 
 const row2 = new MessageActionRow().addComponents(
@@ -712,7 +712,7 @@ const row2 = new MessageActionRow().addComponents(
   new MessageButton()
     .setCustomId("config_rankmode")
     .setLabel("Rank Mode")
-    .setStyle("SECONDARY"),
+    .setStyle("SECONDARY")
 );
 
   return interaction.reply({
