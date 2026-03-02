@@ -1091,14 +1091,14 @@ if (interaction.customId === "config_rankmode") {
   saveConfig();
 
   const embed = new MessageEmbed()
-  .setColor("#00E5FF") // warna strip kiri (samakan dengan gradient)
-  .setDescription(
-    `🎉 **Selamat! ${member} naik ke Level ${newLevel}.**\n\n` +
-    `Terima kasih atas keaktifanmu, terus ramaikan server dan GG!`
-  )
-  .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
-  .setFooter({ text: "Pawn Me Level System" })
-  .setTimestamp();
+    .setColor(config.level_up_enabled ? "#2ECC71" : "#E74C3C")
+    .setTitle("🎉 Level Up Notification")
+    .setDescription(
+      config.level_up_enabled
+        ? "Level Up sekarang **AKTIF**."
+        : "Level Up sekarang **NONAKTIF**."
+    )
+    .setTimestamp();
 
   return interaction.reply({ embeds: [embed], ephemeral: true });
 }
