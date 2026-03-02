@@ -708,7 +708,11 @@ const row2 = new MessageActionRow().addComponents(
   new MessageButton()
     .setCustomId("config_levelup")
     .setLabel("Level Up")
-    .setStyle("SECONDARY")
+    .setStyle("SECONDARY"),
+  new MessageButton()
+    .setCustomId("config_rankmode")
+    .setLabel("Rank Mode")
+    .setStyle("SECONDARY"),
 );
 
   return interaction.reply({
