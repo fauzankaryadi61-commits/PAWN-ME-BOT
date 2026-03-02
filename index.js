@@ -479,6 +479,22 @@ Semoga betah ya dan jangan malu malu untuk sapa sapa juga membahas hal randomüê
 
 async function generateLevelCard(member, totalExp, rank) {
 
+function roundRect(ctx, x, y, width, height, radius, fillColor) {
+  ctx.fillStyle = fillColor;
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  ctx.fill();
+}
+
   const width = 1000;
   const height = 350;
 
@@ -489,9 +505,14 @@ async function generateLevelCard(member, totalExp, rank) {
   const background = await loadImage("https://i.imgur.com/8Km9tLL.png"); // ganti dengan banner final kamu
   ctx.drawImage(background, 0, 0, width, height);
 
-  // Overlay dark glass
-  ctx.fillStyle = "rgba(0,0,0,0.65)";
-  ctx.fillRect(0, 0, width, height);
+  // Glass panel
+ctx.fillStyle = "rgba(15, 15, 30, 0.75)";
+ctx.fillRect(40, 40, width - 80, height - 80);
+
+// Border tipis glow
+ctx.strokeStyle = "rgba(120, 150, 255, 0.5)";
+ctx.lineWidth = 2;
+ctx.strokeRect(40, 40, width - 80, height - 80);
 
   // === Hitung Level ===
   const level = Math.floor(0.1 * Math.sqrt(totalExp));
@@ -508,6 +529,19 @@ async function generateLevelCard(member, totalExp, rank) {
     member.user.displayAvatarURL({ format: "png", size: 256 })
   );
 
+  // Avatar border
+ctx.strokeStyle = "#1ABC9C";
+ctx.lineWidth = 6;
+ctx.beginPath();
+ctx.arc(140, 175, 90, 0, Math.PI * 2);
+ctx.stroke();
+
+// Status dot
+ctx.fillStyle = "#00FF88";
+ctx.beginPath();
+ctx.arc(205, 235, 18, 0, Math.PI * 2);
+ctx.fill();
+
   ctx.save();
   ctx.beginPath();
   ctx.arc(140, 175, 90, 0, Math.PI * 2);
@@ -521,9 +555,9 @@ async function generateLevelCard(member, totalExp, rank) {
   ctx.font = "24px Sans";
   ctx.fillText(`RANK #${rank}`, 300, 90);
 
-  ctx.font = "24px Sans";
-  ctx.fillStyle = "#1ABC9C";
-  ctx.fillText(`LEVEL ${level}`, 780, 90);
+  ctx.font = "28px Sans";
+ctx.fillStyle = "#1ABC9C";
+ctx.fillText(`LEVEL ${level}`, 780, 90);
 
   // Username
   ctx.fillStyle = "#FFFFFF";
@@ -542,13 +576,8 @@ async function generateLevelCard(member, totalExp, rank) {
   const barX = 300;
   const barY = 210;
 
-  // Background
-  ctx.fillStyle = "#2C2F33";
-  ctx.fillRect(barX, barY, barWidth, barHeight);
-
-  // Fill
-  ctx.fillStyle = "#1ABC9C";
-  ctx.fillRect(barX, barY, barWidth * progress, barHeight);
+  roundRect(ctx, barX, barY, barWidth, barHeight, 20, "#2C2F33");
+roundRect(ctx, barX, barY, barWidth * progress, barHeight, 20, "#1ABC9C");
 
   return canvas.toBuffer();
 }
