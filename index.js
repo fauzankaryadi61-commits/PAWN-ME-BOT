@@ -563,11 +563,15 @@ client.on("interactionCreate", async (interaction) => {
     
     if (interaction.commandName === "pmlevel") {
   const user = interaction.options.getUser("user") || interaction.user;
-const data = levels[user.id];
-
-if (!data) {
-  return interaction.reply({ content: "User belum memiliki data level.", ephemeral: true });
+if (!levels[user.id]) {
+  levels[user.id] = {
+    chat: { total: 0 },
+    voice: { total: 0 }
+  };
+  saveLevels(); // kalau kamu punya function save
 }
+
+const data = levels[user.id];
 
 const totalExp = data.chat.total + data.voice.total;
 
