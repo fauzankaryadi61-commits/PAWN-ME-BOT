@@ -931,7 +931,6 @@ if (interaction.customId === "config_role") {
 
 }
 
-  if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
 
   if (interaction.isModalSubmit() && interaction.customId === "modal_role_reward") {
 
@@ -969,6 +968,8 @@ if (interaction.customId === "config_role") {
 
   return interaction.reply({ embeds: [embed], ephemeral: true });
 }
+
+  if (interaction.isModalSubmit() && interaction.customId === "modal_exp_settings") {
 
   if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
     return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
