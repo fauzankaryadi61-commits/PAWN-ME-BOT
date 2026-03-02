@@ -560,8 +560,21 @@ ctx.fill();
   ctx.clip();
   ctx.drawImage(avatar, 50, 85, 180, 180);
   ctx.restore();
+  
+  ctx.beginPath();
+ctx.arc(140, 175, 95, 0, Math.PI * 2);
+ctx.strokeStyle = "rgba(26,188,156,0.8)";
+ctx.lineWidth = 6;
+ctx.shadowColor = "rgba(26,188,156,0.7)";
+ctx.shadowBlur = 20;
+ctx.stroke();
+ctx.shadowBlur = 0;
 
   // === Text Settings ===
+  ctx.shadowColor = "rgba(0,0,0,0.6)";
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 2;
   ctx.fillStyle = "#FFFFFF";
   ctx.font = "24px Sans";
   ctx.fillText(`RANK #${rank}`, 300, 90);
