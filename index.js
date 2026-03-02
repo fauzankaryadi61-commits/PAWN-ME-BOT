@@ -79,15 +79,32 @@ if (config.role_rewards_enabled && config.role_rewards) {
 
   const rewards = config.role_rewards;
 
-  for (const level in rewards) {
+  // Urutkan level reward
+  const sortedLevels = Object.keys(rewards)
+    .map(l => parseInt(l))
+    .sort((a, b) => a - b);
 
-    if (newLevel >= parseInt(level) && oldLevel < parseInt(level)) {
+  for (const level of sortedLevels) {
+
+    if (newLevel >= level && oldLevel < level) {
 
       const roleId = rewards[level];
       const role = member.guild.roles.cache.get(roleId);
 
-      if (role && !member.roles.cache.has(roleId)) {
-        await member.roles.add(role).catch(() => {});
+      if (!role) continue;
+
+      // Rank mode aktif → hapus semua role reward lain
+      if (config.rank_mode_enabled) {
+        for (const otherLevel of sortedLevels) {
+          const otherRoleId = rewards[otherLevel];
+          if (member.roles.cache.has(otherRoleId)) {
+            await member.roles.remove(otherRoleId).catch(() => {});
+          }
+        }
+      }
+
+      if (!member.roles.cache.has(roleId)) {
+        await member.roles.add(roleId).catch(() => {});
       }
     }
   }
@@ -656,6 +673,7 @@ const voiceText = voiceTop.map((u, i) =>
     .addField("Level Up Channel", `<#${config.level_up_channel}>`, true)
     .addField("Level Up Mention", config.level_up_mention ? "On" : "Off", true)
     .addField("Role Reward", config.role_rewards_enabled ? "Aktif" : "Nonaktif", true)
+    .addField("Rank Mode", config.rank_mode_enabled ? "Aktif" : "Nonaktif", true)
     .setFooter({ text: "Pawn Me Premium Level System" })
     .setTimestamp();
 
@@ -679,7 +697,11 @@ const voiceText = voiceTop.map((u, i) =>
   new MessageButton()
     .setCustomId("config_scheduler")
     .setLabel("Scheduler")
-    .setStyle("SECONDARY")
+    .setStyle("SECONDARY"),
+  new MessageButton()
+    .setCustomId("config_rankmode")
+    .setLabel("Rank Mode")
+    .setStyle("SECONDARY"),
 );
 
 const row2 = new MessageActionRow().addComponents(
@@ -807,6 +829,28 @@ const row2 = new MessageActionRow().addComponents(
   );
 
   return interaction.showModal(modal);
+}
+
+if (interaction.customId === "config_rankmode") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({ content: "Kamu tidak punya izin.", ephemeral: true });
+  }
+
+  config.rank_mode_enabled = !config.rank_mode_enabled;
+  saveConfig();
+
+  const embed = new MessageEmbed()
+    .setColor(config.rank_mode_enabled ? "#2ECC71" : "#E74C3C")
+    .setTitle("🏆 Rank Mode Updated")
+    .setDescription(
+      config.rank_mode_enabled
+        ? "Rank Mode sekarang **AKTIF**.\nRole lama akan dicabut saat naik level."
+        : "Rank Mode sekarang **NONAKTIF**.\nRole akan menumpuk."
+    )
+    .setTimestamp();
+
+  return interaction.reply({ embeds: [embed], ephemeral: true });
 }
 
   if (interaction.customId === "config_levelup") {
