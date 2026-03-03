@@ -459,15 +459,16 @@ async function sendWelcome(member, channel) {
   const embed = new MessageEmbed()
     .setColor("#1ABC9C")
     .setDescription(
-`~Ninu Ninu Ninu Ninu🚑🚨  
+`**WELCOME TO PAWN ME 🐾**
+
+~Ninu Ninu Ninu Ninu🚑🚨  
 ༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺  
 
-Haii👋🏻, ${member}  
+Haii👋🏻, ${member}
 
-Welcome to Pawn Me Family🧸🎉  
-Terimakasih karena telah berminat untuk bergabung dengan server kami✨🩷  
+Welcome to Pawn Me Family🧸🎉 Terimakasih karena telah berminat untuk bergabung dengan server kami✨🩷  
 Yok jangan malu untuk nimbrung dan ajak ajak untuk main game yok🎮🌟  
-Kamu, kita sambut dengan hangat🧸💕  
+Kamu, kita sambut dengan hangat🧸💕
 
 ~Tring Tring Tring⏰🎶  
 
@@ -479,8 +480,9 @@ Anggap Pawn Me sebagai keluarga kamu dan rumah kedua mu🏡💞
 
 *-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh.  
 Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
+)`
     )
-    .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+
     .setFooter({
       text: `Member ke-${member.guild.memberCount}`,
       iconURL: member.guild.iconURL({ dynamic: true })
