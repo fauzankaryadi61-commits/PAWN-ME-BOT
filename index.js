@@ -458,7 +458,6 @@ async function sendWelcome(member, channel) {
 
   const embed = new MessageEmbed()
     .setColor("#1ABC9C")
-    .setTitle("WELCOME TO PAWN ME 🐾")
     .setDescription(
 `~Ninu Ninu Ninu Ninu🚑🚨  
 ༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺  
@@ -487,7 +486,10 @@ Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
     })
     .setTimestamp();
 
-  await channel.send({ embeds: [embed] });
+  await channel.send({
+  content: "**WELCOME TO PAWN ME 🐾**",
+  embeds: [embed]
+});
 }
 
 client.on("guildMemberAdd", async (member) => {
