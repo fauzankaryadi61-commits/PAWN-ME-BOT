@@ -454,13 +454,10 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 
 /* ================= AUTO WELCOME ================= */
 
-client.on("guildMemberAdd", async (member) => {
-
-  const channel = member.guild.channels.cache.get(AUTO_WELCOME_CHANNEL);
-  if (!channel) return;
+async function sendWelcome(member, channel) {
 
   const embed = new MessageEmbed()
-    .setColor("#1ABC9C") // bisa ganti ke #00E5FF kalau mau lebih neon
+    .setColor("#1ABC9C")
     .setDescription(
 `~Ninu Ninu Ninu Ninu🚑🚨  
 ༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺  
@@ -491,6 +488,13 @@ Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
     .setTimestamp();
 
   await channel.send({ embeds: [embed] });
+}
+
+client.on("guildMemberAdd", async (member) => {
+  const channel = member.guild.channels.cache.get(AUTO_WELCOME_CHANNEL);
+  if (!channel) return;
+
+  sendWelcome(member, channel);
 });
 
 /* ================= LEVEL CARD ================= */
@@ -680,6 +684,16 @@ const buffer = await generateLevelCard(member, totalExp, rank);
 const attachment = new MessageAttachment(buffer, "pm-level.png");
 
 return interaction.reply({ files: [attachment] });
+}
+
+if (interaction.commandName === "welcome") {
+
+  const user = interaction.options.getUser("user1");
+  const member = await interaction.guild.members.fetch(user.id);
+
+  await sendWelcome(member, interaction.channel);
+
+  return interaction.reply({ content: "Test welcome terkirim.", ephemeral: true });
 }
 
 if (interaction.commandName === "pmleaderboard") {
