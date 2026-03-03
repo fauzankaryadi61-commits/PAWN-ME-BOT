@@ -458,10 +458,9 @@ async function sendWelcome(member, channel) {
 
   const embed = new MessageEmbed()
     .setColor("#1ABC9C")
+    .setTitle("WELCOME TO PAWN ME 🐾")
     .setDescription(
-`**WELCOME TO PAWN ME 🐾**
-
-~Ninu Ninu Ninu Ninu🚑🚨  
+`~Ninu Ninu Ninu Ninu🚑🚨  
 ༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺  
 
 Haii👋🏻, ${member}
@@ -480,11 +479,10 @@ Anggap Pawn Me sebagai keluarga kamu dan rumah kedua mu🏡💞
 
 *-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh.  
 Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
-)`
-    )
+)
 
     .setFooter({
-      text: `Member ke-${member.guild.memberCount}`,
+      text: `PAWN ME Auto Welcome`,
       iconURL: member.guild.iconURL({ dynamic: true })
     })
     .setTimestamp();
