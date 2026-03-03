@@ -487,7 +487,7 @@ Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
     .setTimestamp();
 
   await channel.send({
-  content: "**WELCOME TO PAWN ME 🐾**",
+  content: "**WELCOME TO PAWN ME FAMILY**",
   embeds: [embed]
 });
 }
