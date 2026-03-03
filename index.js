@@ -455,10 +455,15 @@ client.on("voiceStateUpdate", async (oldState, newState) => {
 /* ================= AUTO WELCOME ================= */
 
 client.on("guildMemberAdd", async (member) => {
+
   const channel = member.guild.channels.cache.get(AUTO_WELCOME_CHANNEL);
   if (!channel) return;
 
-  await channel.send(`~Ninu Ninu Ninu Ninu🚑🚨
+  const embed = new MessageEmbed()
+    .setColor("#00E5FF") // strip kiri glow cyan
+    .setTitle("👋 Selamat Datang di Pawn Me!")
+    .setDescription(
+      `~Ninu Ninu Ninu Ninu🚑🚨
 ༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺
 
 Haii👋🏻, ${member}
@@ -471,8 +476,16 @@ Kamu melupakan sesuatu tidak❓❓ Ayoo utamakan untuk Literasi Rules lebih dulu
 
 Semoga betah ya dan jangan malu malu untuk sapa sapa juga membahas hal random🐼✨ Anggap Pawn Me sebagai keluarga kamu dan rumah kedua mu🏡💞
 
-*-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh. Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*
-`);
+*-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh. Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
+    )
+    .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
+    .setFooter({
+      text: `Member ke-${member.guild.memberCount}`,
+      iconURL: member.guild.iconURL({ dynamic: true })
+    })
+    .setTimestamp();
+
+  await channel.send({ embeds: [embed] });
 });
 
 /* ================= LEVEL CARD ================= */
