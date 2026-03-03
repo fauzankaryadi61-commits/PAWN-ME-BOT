@@ -460,23 +460,28 @@ client.on("guildMemberAdd", async (member) => {
   if (!channel) return;
 
   const embed = new MessageEmbed()
-    .setColor("#00E5FF") // strip kiri glow cyan
-    .setTitle("👋 Selamat Datang di Pawn Me!")
+    .setColor("#1ABC9C") // bisa ganti ke #00E5FF kalau mau lebih neon
     .setDescription(
-      `~Ninu Ninu Ninu Ninu🚑🚨
-༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺
+`~Ninu Ninu Ninu Ninu🚑🚨  
+༻꫞ Ꮅ𝑎𝑤𝑛 𐒄𝑒 ʄ𝑎𝑚𝑠 ꫞༺  
 
-Haii👋🏻, ${member}
+Haii👋🏻, ${member}  
 
-Welcome to Pawn Me Family🧸🎉 Terimakasih karena telah berminat untuk bergabung dengan server kami✨🩷 Yok jangan malu untuk nimbrung dan ajak ajak untuk main game yok🎮🌟 Kamu, kita sambut dengan hangat🧸💕
+Welcome to Pawn Me Family🧸🎉  
+Terimakasih karena telah berminat untuk bergabung dengan server kami✨🩷  
+Yok jangan malu untuk nimbrung dan ajak ajak untuk main game yok🎮🌟  
+Kamu, kita sambut dengan hangat🧸💕  
 
-~Tring Tring Tring⏰🎶
+~Tring Tring Tring⏰🎶  
 
-Kamu melupakan sesuatu tidak❓❓ Ayoo utamakan untuk Literasi Rules lebih dulu dan jangan lupa Take roles nyaa yapp, don't forget 💭💫
+Kamu melupakan sesuatu tidak❓❓  
+Ayoo utamakan untuk Literasi Rules lebih dulu dan jangan lupa Take roles nyaa yapp, don't forget 💭💫  
 
-Semoga betah ya dan jangan malu malu untuk sapa sapa juga membahas hal random🐼✨ Anggap Pawn Me sebagai keluarga kamu dan rumah kedua mu🏡💞
+Semoga betah ya dan jangan malu malu untuk sapa sapa juga membahas hal random🐼✨  
+Anggap Pawn Me sebagai keluarga kamu dan rumah kedua mu🏡💞  
 
-*-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh. Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
+*-Jangan sungkan sungkan kalo merasa tidak nyaman dan ingin mengeluh.  
+Pengurus Pawn Me akan menerima semua kritik, saran dan keluhanmu di PM-💕✨*`
     )
     .setThumbnail(member.user.displayAvatarURL({ dynamic: true }))
     .setFooter({
