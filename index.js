@@ -283,13 +283,15 @@ client.on("messageCreate", async (message) => {
 
 /* ================= AUTO MODERATION ================= */
 
-  const content = message.content.toLowerCase();
+  const normalized = message.content
+  .toLowerCase()
+  .replace(/[^a-z0-9\s]/g, "");
 
-  const detectedWord = badWords.find(word =>
-    new RegExp(word.split("").join("\\s*"), "i").test(content)
-  );
+const regex = new RegExp(`\\b(${badWords.join("|")})\\b`, "i");
 
-  if (!detectedWord) return;
+const detectedWord = regex.exec(normalized)?.[1];
+
+if (!detectedWord) return;
   if (!message.member || !message.member.moderatable) return;
 
   await message.delete().catch(() => {});
