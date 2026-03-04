@@ -545,7 +545,6 @@ return {
 };
 
 }
-
 /* ================= LEVEL CARD ================= */
 
 async function generateLevelCard(member, totalExp, rank) {
