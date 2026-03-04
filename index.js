@@ -1255,7 +1255,7 @@ const voiceText = voiceTop.map((u, i) =>
   new MessageButton()
     .setCustomId("config_scheduler")
     .setLabel("Scheduler")
-    .setStyle("SECONDARY"),
+    .setStyle("SECONDARY")
 );
 
 const row2 = new MessageActionRow().addComponents(
