@@ -670,6 +670,11 @@ ctx.shadowBlur = 0;
 
 async function generateDualLevelCard(member, data, rankChat, rankVoice) {
 
+// ===== SAFETY DATA =====
+data = data || {};
+data.chat = data.chat || { total: 0 };
+data.voice = data.voice || { total: 0 };
+
 const width = 1000;
 const height = 350;
 
