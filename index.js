@@ -675,7 +675,8 @@ client.on("interactionCreate", async (interaction) => {
     const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
     
     if (interaction.commandName === "pmlevel") {
-  const user = interaction.options.getUser("user") || interaction.user;
+  const kategori = interaction.options.getString("kategori");
+const user = interaction.options.getUser("user") || interaction.user;
 if (!levels[user.id]) {
   levels[user.id] = {
     chat: { total: 0 },
@@ -686,7 +687,9 @@ if (!levels[user.id]) {
 
 const data = levels[user.id];
 
-const totalExp = data.chat.total + data.voice.total;
+const chatExp = data.chat.total || 0;
+const voiceExp = data.voice.total || 0;
+const totalExp = chatExp + voiceExp;
 
 // Hitung rank global
 const sorted = Object.entries(levels)
@@ -696,11 +699,49 @@ const sorted = Object.entries(levels)
   }))
   .sort((a, b) => b.total - a.total);
 
+ // Rank Chat
+const chatSorted = Object.entries(levels)
+  .map(([id, d]) => ({
+    id,
+    exp: d.chat.total || 0
+  }))
+  .sort((a, b) => b.exp - a.exp);
+
+const chatRank = chatSorted.findIndex(u => u.id === user.id) + 1;
+
+// Rank Voice
+const voiceSorted = Object.entries(levels)
+  .map(([id, d]) => ({
+    id,
+    exp: d.voice.total || 0
+  }))
+  .sort((a, b) => b.exp - a.exp);
+
+const voiceRank = voiceSorted.findIndex(u => u.id === user.id) + 1;
+
 const rank = sorted.findIndex(u => u.id === user.id) + 1;
 
 const member = await interaction.guild.members.fetch(user.id);
 
-const buffer = await generateLevelCard(member, totalExp, rank);
+let buffer;
+
+if (kategori === "chat") {
+  buffer = await generateLevelCard(member, chatExp, chatRank);
+}
+
+else if (kategori === "voice") {
+  buffer = await generateLevelCard(member, voiceExp, voiceRank);
+}
+
+else {
+  buffer = await generateDualLevelCard(
+    member,
+    chatExp,
+    voiceExp,
+    chatRank,
+    voiceRank
+  );
+}
 
 const attachment = new MessageAttachment(buffer, "pm-level.png");
 
