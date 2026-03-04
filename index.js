@@ -588,7 +588,7 @@ ctx.fill();
   ctx.restore();
   
   ctx.beginPath();
-ctx.arc(140, 175, 95, 0, Math.PI * 2);
+ctx.arc(160, 175, 95, 0, Math.PI * 2);
 ctx.strokeStyle = "rgba(26,188,156,0.8)";
 ctx.lineWidth = 6;
 ctx.shadowColor = "rgba(26,188,156,0.7)";
