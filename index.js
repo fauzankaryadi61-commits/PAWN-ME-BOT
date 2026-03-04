@@ -619,8 +619,9 @@ ctx.shadowBlur = 0;
 
   // XP Right Aligned (P sejajar dengan level)
   ctx.font = "22px Sans";
+  const xpX = barX + barWidth;
   ctx.textAlign = "right";
-  ctx.fillText(`${currentXP} / ${requiredXP} XP`, 950, 160);
+  ctx.fillText(`${currentXP} / ${requiredXP} XP`, xpX, 160);
   ctx.textAlign = "left";
 
   // === Progress Bar ===
