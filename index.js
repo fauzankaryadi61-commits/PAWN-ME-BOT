@@ -567,7 +567,7 @@ ctx.strokeRect(40, 40, width - 80, height - 80);
   );
 
   // Avatar border
-ctx.strokeStyle = "#1ABC9C";
+ctx.strokeStyle = "#000000";
 ctx.lineWidth = 6;
 ctx.beginPath();
 ctx.arc(160, 175, 90, 0, Math.PI * 2);
