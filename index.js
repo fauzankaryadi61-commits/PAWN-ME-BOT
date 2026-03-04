@@ -947,58 +947,76 @@ return canvas.toBuffer();
 /* ================= INTERACTION ================= */
 
 client.on("interactionCreate", async (interaction) => {
+
   if (!interaction.isCommand()) return;
-  if (interaction.commandName !== "pmlevel") return;
 
-  try {
+  const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
 
-    await interaction.deferReply(); // WAJIB agar Discord tidak timeout
+  if (interaction.commandName === "pmlevel") {
+
+    await interaction.deferReply();
 
     const user = interaction.options.getUser("user") || interaction.user;
     const kategori = interaction.options.getString("kategori");
-
-    const member = await interaction.guild.members.fetch(user.id);
 
     if (!levels[user.id]) {
       levels[user.id] = {
         chat: { total: 0 },
         voice: { total: 0 }
       };
+      saveLevels();
     }
 
-    const chatExp = levels[user.id].chat?.total || 0;
-    const voiceExp = levels[user.id].voice?.total || 0;
+    const data = levels[user.id];
+    const member = await interaction.guild.members.fetch(user.id);
+
+    const sorted = Object.entries(levels)
+      .map(([id, d]) => ({
+        id,
+        total: (d.chat?.total || 0) + (d.voice?.total || 0)
+      }))
+      .sort((a, b) => b.total - a.total);
+
+    const rank = sorted.findIndex(u => u.id === user.id) + 1;
 
     let buffer;
 
     if (kategori === "chat") {
-      buffer = await generateSingleLevelCard(member, chatExp, "chat");
-    }
-    else if (kategori === "voice") {
-      buffer = await generateSingleLevelCard(member, voiceExp, "voice");
-    }
-    else {
-      buffer = await generateDualLevelCard(member, chatExp, voiceExp);
+
+      buffer = await generateSingleLevelCard(
+        member,
+        data.chat.total || 0,
+        rank,
+        "chat"
+      );
+
+    } else if (kategori === "voice") {
+
+      buffer = await generateSingleLevelCard(
+        member,
+        data.voice.total || 0,
+        rank,
+        "voice"
+      );
+
+    } else {
+
+      buffer = await generateDualLevelCard(
+        member,
+        data.chat.total || 0,
+        data.voice.total || 0,
+        rank
+      );
+
     }
 
-    const attachment = new MessageAttachment(buffer, "pmlevel.png");
+    const attachment = new MessageAttachment(buffer, "pm-level.png");
 
     await interaction.editReply({
       files: [attachment]
     });
 
-  } catch (err) {
-
-    console.error("PMLEVEL ERROR:", err);
-
-    if (interaction.deferred || interaction.replied) {
-      await interaction.editReply("Terjadi error saat membuat level card.");
-    } else {
-      await interaction.reply({
-        content: "Terjadi error saat menjalankan command.",
-        ephemeral: true
-      });
-    }
+  }
 
   // ================= WELCOME =================
 
