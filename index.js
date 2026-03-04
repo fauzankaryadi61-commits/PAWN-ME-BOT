@@ -11,8 +11,6 @@ const {
 
 const { createCanvas, loadImage, registerFont } = require("canvas");
 
-registerFont("./fonts/DejaVuSans-Bold.ttf", {family: "DejaVu"});
-
 registerFont("./fonts/Montserrat-Bold.ttf", {
   family: "MontserratBold"
 });
