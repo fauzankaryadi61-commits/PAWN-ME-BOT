@@ -80,8 +80,8 @@ async function checkLevelUp(member, oldExp, newExp) {
 
   if (!config.level_up_enabled) return;
 
-  const oldLevel = calculateLevel(oldExp);
-  const newLevel = calculateLevel(newExp);
+  const oldLevel = getLevelData(oldExp).level;
+  const newLevel = getLevelData(newExp).level;
 
   if (newLevel <= oldLevel) return;
 
