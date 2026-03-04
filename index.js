@@ -13,11 +13,11 @@ const { createCanvas, loadImage, registerFont } = require("canvas");
 
 registerFont("./fonts/DejaVuSans-Bold.ttf", {family: "DejaVu"});
 
-registerFont("./fonts/montserrat.bold.ttf", {
+registerFont("./fonts/Montserrat-Bold.ttf", {
   family: "MontserratBold"
 });
 
-registerFont("./fonts/montserrat.regular.ttf", {
+registerFont("./fonts/Montserrat-Regular.ttf", {
   family: "Montserrat"
 });
 
