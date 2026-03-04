@@ -1016,8 +1016,6 @@ client.on("interactionCreate", async (interaction) => {
       files: [attachment]
     });
 
-  }
-
   // ================= WELCOME =================
 
   if (interaction.commandName === "welcome") {
