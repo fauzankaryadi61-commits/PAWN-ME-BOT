@@ -852,6 +852,9 @@ const barX = 320;
 
 
 // ================= EXP DATA ================= \\
+const chatExp = data.chat.total || 0;
+const voiceExp = data.voice.total || 0;
+
 const chatData = getLevelData(chatExp);
 const voiceData = getLevelData(voiceExp);
 
