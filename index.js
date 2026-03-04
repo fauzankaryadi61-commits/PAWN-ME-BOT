@@ -624,7 +624,7 @@ ctx.shadowBlur = 0;
   ctx.textAlign = "left";
 
   // === Progress Bar ===
-  const barWidth = 650;
+  const barWidth = 540;
   const barHeight = 30;
   const barX = 300;
   const barY = 210;
