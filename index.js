@@ -1490,7 +1490,10 @@ const member = interaction.options.getMember("member");
 if (kategori === "member") {
 
 if (!member) {
-return interaction.reply({content:"Pilih member.",ephemeral:true});
+return interaction.reply({
+content: "Pilih member.",
+ephemeral: true
+});
 }
 
 levels[member.id] = { chat:{total:0}, voice:{total:0} };
@@ -1498,26 +1501,25 @@ levels[member.id] = { chat:{total:0}, voice:{total:0} };
 saveLevels();
 
 return interaction.reply({
-content:`♻️ EXP ${member} berhasil direset`,
-ephemeral:true
+content: `♻️ EXP ${member} berhasil direset`,
+ephemeral: true
 });
 
 }
 
-if (kategori === "server") {
+else if (kategori === "server") {
 
 levels = {};
 saveLevels();
 
 return interaction.reply({
-content:"♻️ Semua EXP server direset",
-ephemeral:true
+content: "♻️ Semua EXP server direset",
+ephemeral: true
 });
 
 }
 
 }
-
   if (interaction.isButton()) {
 
   if (interaction.customId === "config_exp") {
