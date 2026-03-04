@@ -827,77 +827,49 @@ client.on("interactionCreate", async (interaction) => {
     const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
     
     if (interaction.commandName === "pmlevel") {
-  const kategori = interaction.options.getString("kategori");
+
 const user = interaction.options.getUser("user") || interaction.user;
+
 if (!levels[user.id]) {
-  levels[user.id] = {
-    chat: { total: 0 },
-    voice: { total: 0 }
-  };
-  saveLevels(); // kalau kamu punya function save
+levels[user.id] = {
+chat: { total: 0 },
+voice: { total: 0 }
+};
+saveLevels();
 }
 
 const data = levels[user.id];
 
-const chatExp = data.chat.total || 0;
-const voiceExp = data.voice.total || 0;
-const totalExp = chatExp + voiceExp;
+// ===== RANK CHAT =====
+const sortedChat = Object.entries(levels)
+.map(([id, d]) => ({
+id,
+value: d.chat?.total || 0
+}))
+.sort((a,b) => b.value - a.value);
 
-// Hitung rank global
-const sorted = Object.entries(levels)
-  .map(([id, d]) => ({
-    id,
-    total: d.chat.total + d.voice.total
-  }))
-  .sort((a, b) => b.total - a.total);
+const rankChat = sortedChat.findIndex(u => u.id === user.id) + 1;
 
- // Rank Chat
-const chatSorted = Object.entries(levels)
-  .map(([id, d]) => ({
-    id,
-    exp: d.chat.total || 0
-  }))
-  .sort((a, b) => b.exp - a.exp);
 
-const chatRank = chatSorted.findIndex(u => u.id === user.id) + 1;
+// ===== RANK VOICE =====
+const sortedVoice = Object.entries(levels)
+.map(([id, d]) => ({
+id,
+value: d.voice?.total || 0
+}))
+.sort((a,b) => b.value - a.value);
 
-// Rank Voice
-const voiceSorted = Object.entries(levels)
-  .map(([id, d]) => ({
-    id,
-    exp: d.voice.total || 0
-  }))
-  .sort((a, b) => b.exp - a.exp);
+const rankVoice = sortedVoice.findIndex(u => u.id === user.id) + 1;
 
-const voiceRank = voiceSorted.findIndex(u => u.id === user.id) + 1;
-
-const rank = sorted.findIndex(u => u.id === user.id) + 1;
 
 const member = await interaction.guild.members.fetch(user.id);
 
-let buffer;
-
-if (kategori === "chat") {
-  buffer = await generateLevelCard(member, chatExp, chatRank);
-}
-
-else if (kategori === "voice") {
-  buffer = await generateLevelCard(member, voiceExp, voiceRank);
-}
-
-else {
-  buffer = await generateDualLevelCard(
-    member,
-    chatExp,
-    voiceExp,
-    chatRank,
-    voiceRank
-  );
-}
+const buffer = await generateDualLevelCard(member, data, rankChat, rankVoice);
 
 const attachment = new MessageAttachment(buffer, "pm-level.png");
 
 return interaction.reply({ files: [attachment] });
+
 }
 
 if (interaction.commandName === "welcome") {
