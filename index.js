@@ -970,7 +970,7 @@ client.on("interactionCreate", async (interaction) => {
   const data = levels[user.id];
   const member = await interaction.guild.members.fetch(user.id);
 
-  const totalExp = data.chat.total + data.voice.total;
+  const totalExp = (data.chat?.total || 0) + (data.voice?.total || 0);
 
   const sorted = Object.entries(levels)
     .map(([id, d]) => ({
@@ -1014,7 +1014,9 @@ client.on("interactionCreate", async (interaction) => {
 
   const attachment = new MessageAttachment(buffer, "pm-level.png");
 
-  return interaction.editReply({ files: [attachment] });
+  await interaction.editReply({
+    files: [attachment]
+  });
 
 }
 
