@@ -948,80 +948,77 @@ return canvas.toBuffer();
 
 client.on("interactionCreate", async (interaction) => {
 
-  if (interaction.isCommand()) {
+  if (!interaction.isCommand()) return;
 
-    const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
-
+  const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
 
   if (interaction.commandName === "pmlevel") {
 
-  await interaction.deferReply();
+    await interaction.deferReply();
 
-  const user = interaction.options.getUser("user") || interaction.user;
-  const kategori = interaction.options.getString("kategori");
+    const user = interaction.options.getUser("user") || interaction.user;
+    const kategori = interaction.options.getString("kategori");
 
-  if (!levels[user.id]) {
-    levels[user.id] = {
-      chat: { total: 0 },
-      voice: { total: 0 }
-    };
-    saveLevels();
-  }
+    if (!levels[user.id]) {
+      levels[user.id] = {
+        chat: { total: 0 },
+        voice: { total: 0 }
+      };
+      saveLevels();
+    }
 
-  const data = levels[user.id];
-  const member = await interaction.guild.members.fetch(user.id);
+    const data = levels[user.id];
+    const member = await interaction.guild.members.fetch(user.id);
 
-  const totalExp = data.chat.total + data.voice.total;
+    const sorted = Object.entries(levels)
+      .map(([id, d]) => ({
+        id,
+        total: (d.chat?.total || 0) + (d.voice?.total || 0)
+      }))
+      .sort((a, b) => b.total - a.total);
 
-  const sorted = Object.entries(levels)
-    .map(([id, d]) => ({
-      id,
-      total: (d.chat?.total || 0) + (d.voice?.total || 0)
-    }))
-    .sort((a, b) => b.total - a.total);
+    const rank = sorted.findIndex(u => u.id === user.id) + 1;
 
-  const rank = sorted.findIndex(u => u.id === user.id) + 1;
+    let buffer;
 
-  let buffer;
+    if (kategori === "chat") {
 
-  if (kategori === "chat") {
+      buffer = await generateSingleLevelCard(
+        member,
+        data.chat.total || 0,
+        rank,
+        "chat"
+      );
 
-    buffer = await generateSingleLevelCard(
-      member,
-      data.chat.total || 0,
-      rank,
-      "chat"
-    );
+    } else if (kategori === "voice") {
 
-  } else if (kategori === "voice") {
+      buffer = await generateSingleLevelCard(
+        member,
+        data.voice.total || 0,
+        rank,
+        "voice"
+      );
 
-    buffer = await generateSingleLevelCard(
-      member,
-      data.voice.total || 0,
-      rank,
-      "voice"
-    );
+    } else {
 
-  } else {
+      buffer = await generateDualLevelCard(
+        member,
+        data.chat.total || 0,
+        data.voice.total || 0,
+        rank
+      );
 
-    buffer = await generateDualLevelCard(
-      member,
-      data.chat.total || 0,
-      data.voice.total || 0,
-      rank
-    );
+    }
 
-  }
+    const attachment = new MessageAttachment(buffer, "pm-level.png");
 
-  const attachment = new MessageAttachment(buffer, "pm-level.png");
-
-  return interaction.editReply({ files: [attachment] });
-
-}
+    await interaction.editReply({
+      files: [attachment]
+    });
 
   }
 
-});
+}); 
 
 if (interaction.commandName === "welcome") {
 
