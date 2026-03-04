@@ -292,6 +292,86 @@ client.once("ready", async () => {
   {
     name: "pmmonthly",
     description: "Trigger monthly leaderboard manual"
+},
+{
+ name: "pmexpadd",
+ description: "Tambah EXP member",
+ options: [
+  {
+   name: "member",
+   description: "Target member",
+   type: 6,
+   required: true
+  },
+  {
+   name: "exp",
+   description: "Jumlah EXP",
+   type: 4,
+   required: true
+  },
+  {
+   name: "kategori",
+   description: "Kategori EXP",
+   type: 3,
+   required: true,
+   choices: [
+    { name: "Chat", value: "chat" },
+    { name: "Voice", value: "voice" }
+   ]
+  }
+ ]
+},
+
+{
+ name: "pmexpremove",
+ description: "Kurangi EXP member",
+ options: [
+  {
+   name: "member",
+   description: "Target member",
+   type: 6,
+   required: true
+  },
+  {
+   name: "exp",
+   description: "Jumlah EXP",
+   type: 4,
+   required: true
+  },
+  {
+   name: "kategori",
+   description: "Kategori EXP",
+   type: 3,
+   required: true,
+   choices: [
+    { name: "Chat", value: "chat" },
+    { name: "Voice", value: "voice" }
+   ]
+  }
+ ]
+},
+
+{
+ name: "pmexpreset",
+ description: "Reset EXP",
+ options: [
+  {
+   name: "kategori",
+   description: "Kategori reset",
+   type: 3,
+   required: true,
+   choices: [
+    { name: "Member", value: "member" },
+    { name: "Server", value: "server" }
+   ]
+  },
+  {
+   name: "member",
+   description: "Target member",
+   type: 6,
+   required: false
+  }
+ ]
 }
 
 ];
@@ -1358,6 +1438,84 @@ const row2 = new MessageActionRow().addComponents(
       if (logChannel) logChannel.send(`🔨 ${user.tag} di-ban.\nAlasan: ${reason}`);
     }
   }
+
+if (interaction.commandName === "pmexpadd") {
+
+const member = interaction.options.getMember("member");
+const exp = interaction.options.getInteger("exp");
+const kategori = interaction.options.getString("kategori");
+
+if (!levels[member.id]) {
+levels[member.id] = { chat:{total:0}, voice:{total:0} };
+}
+
+levels[member.id][kategori].total += exp;
+
+saveLevels();
+
+return interaction.reply({
+content:`✅ ${exp} EXP ditambahkan ke ${member}`,
+ephemeral:true
+});
+
+}
+
+if (interaction.commandName === "pmexpremove") {
+
+const member = interaction.options.getMember("member");
+const exp = interaction.options.getInteger("exp");
+const kategori = interaction.options.getString("kategori");
+
+if (!levels[member.id]) {
+levels[member.id] = { chat:{total:0}, voice:{total:0} };
+}
+
+levels[member.id][kategori].total =
+Math.max(0, levels[member.id][kategori].total - exp);
+
+saveLevels();
+
+return interaction.reply({
+content:`❌ ${exp} EXP dikurangi dari ${member}`,
+ephemeral:true
+});
+
+}
+
+if (interaction.commandName === "pmexpreset") {
+
+const kategori = interaction.options.getString("kategori");
+const member = interaction.options.getMember("member");
+
+if (kategori === "member") {
+
+if (!member) {
+return interaction.reply({content:"Pilih member.",ephemeral:true});
+}
+
+levels[member.id] = { chat:{total:0}, voice:{total:0} };
+
+saveLevels();
+
+return interaction.reply({
+content:`♻️ EXP ${member} berhasil direset`,
+ephemeral:true
+});
+
+}
+
+if (kategori === "server") {
+
+levels = {};
+saveLevels();
+
+return interaction.reply({
+content:"♻️ Semua EXP server direset",
+ephemeral:true
+});
+
+}
+
 
   if (interaction.isButton()) {
 
