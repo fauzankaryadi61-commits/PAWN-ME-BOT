@@ -954,6 +954,8 @@ client.on("interactionCreate", async (interaction) => {
     
     if (interaction.commandName === "pmlevel") {
 
+await interaction.deferReply();
+
 const user = interaction.options.getUser("user") || interaction.user;
 const kategori = interaction.options.getString("kategori");
 
@@ -1037,7 +1039,7 @@ rankVoice
 
 const attachment = new MessageAttachment(buffer, "pm-level.png");
 
-return interaction.reply({ files: [attachment] });
+return interaction.editReply({ files: [attachment] });
 
 }
 
