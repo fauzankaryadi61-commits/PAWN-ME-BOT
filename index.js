@@ -694,7 +694,7 @@ ctx.fill();
 }
 
 // ================= BACKGROUND ================= \\
-const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg");
+const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg?ex=69a8de91&is=69a78d11&hm=e57c1482112fbff9d967dbfc17b6a2bc209a32d5ccda71451e53d813dd774842&");
 ctx.drawImage(background, 0, 0, width, height);
 
 const overlay = ctx.createLinearGradient(0, 0, 0, height);
