@@ -752,8 +752,13 @@ async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceR
   ctx.fillText(`${chatCurrent} / ${chatRequired} XP`, barX + barWidth, chatY - 10);
   ctx.textAlign = "left";
 
-  ctx.fillStyle = "#2C2F33";
-  ctx.fillRect(barX, chatY, barWidth, barHeight);
+  ctx.shadowColor = "#00E5FF";
+ctx.shadowBlur = 20;
+
+ctx.fillStyle = chatGradient;
+ctx.fillRect(barX, chatY, barWidth * chatProgress, barHeight);
+
+ctx.shadowBlur = 0;
 
   const chatGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
   chatGradient.addColorStop(0, "#1ABC9C");
@@ -780,8 +785,13 @@ async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceR
   ctx.fillText(`${voiceCurrent} / ${voiceRequired} XP`, barX + barWidth, voiceY - 10);
   ctx.textAlign = "left";
 
-  ctx.fillStyle = "#2C2F33";
-  ctx.fillRect(barX, voiceY, barWidth, barHeight);
+  ctx.shadowColor = "#3498DB";
+ctx.shadowBlur = 20;
+
+ctx.fillStyle = voiceGradient;
+ctx.fillRect(barX, voiceY, barWidth * voiceProgress, barHeight);
+
+ctx.shadowBlur = 0;
 
   const voiceGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
   voiceGradient.addColorStop(0, "#9B59B6");
