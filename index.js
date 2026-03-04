@@ -818,6 +818,132 @@ return canvas.toBuffer();
 
 // ================= END DUAL LEVEL CARD ================= \\
 
+// ================= SINGLE LEVEL CARD ================= \\
+
+async function generateSingleLevelCard(member, exp, rank, type) {
+
+const width = 1000;
+const height = 350;
+
+const canvas = createCanvas(width, height);
+const ctx = canvas.getContext("2d");
+
+function roundRect(ctx, x, y, width, height, radius, color) {
+ctx.fillStyle = color;
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + width - radius, y);
+ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+ctx.lineTo(x + width, y + height - radius);
+ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+ctx.lineTo(x + radius, y + height);
+ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+ctx.fill();
+}
+
+// ================= BACKGROUND ================= \\
+
+ctx.fillStyle = "#0f172a";
+ctx.fillRect(0,0,width,height);
+
+roundRect(ctx, 40, 40, width - 80, height - 80, 30, "rgba(10,10,30,0.6)");
+
+
+// ================= AVATAR ================= \\
+
+const avatar = await loadImage(
+member.user.displayAvatarURL({ format: "png", size: 256 })
+);
+
+ctx.save();
+ctx.beginPath();
+ctx.arc(170,175,85,0,Math.PI*2);
+ctx.closePath();
+ctx.clip();
+ctx.drawImage(avatar,85,90,170,170);
+ctx.restore();
+
+ctx.strokeStyle = "#00E5FF";
+ctx.lineWidth = 6;
+ctx.beginPath();
+ctx.arc(170,175,90,0,Math.PI*2);
+ctx.stroke();
+
+
+// ================= LEVEL CALC ================= \\
+
+const level = Math.floor(0.1 * Math.sqrt(exp));
+
+const nextLevel = Math.pow((level + 1) / 0.1, 2);
+const currentLevel = Math.pow(level / 0.1, 2);
+
+const currentXP = exp - currentLevel;
+const requiredXP = nextLevel - currentLevel;
+
+const progress = currentXP / requiredXP;
+
+
+// ================= TEXT ================= \\
+
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "32px Sans";
+ctx.fillText(member.user.username,320,120);
+
+ctx.font = "24px Sans";
+ctx.fillText(`Rank #${rank}`,320,170);
+
+ctx.font = "26px Sans";
+ctx.fillText(`Level ${level}`,780,120);
+
+
+// ================= BAR ================= \\
+
+const barWidth = 520;
+const barHeight = 30;
+
+const barX = 320;
+const barY = 210;
+
+roundRect(ctx,barX,barY,barWidth,barHeight,20,"#2C2F33");
+
+const gradient = ctx.createLinearGradient(barX,0,barX+barWidth,0);
+
+if(type === "chat"){
+gradient.addColorStop(0,"#1ABC9C");
+gradient.addColorStop(1,"#00E5FF");
+}else{
+gradient.addColorStop(0,"#9B59B6");
+gradient.addColorStop(1,"#3498DB");
+}
+
+ctx.fillStyle = gradient;
+
+roundRect(ctx,barX,barY,barWidth*progress,barHeight,20,gradient);
+
+
+// ================= XP TEXT ================= \\
+
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "22px Sans";
+ctx.textAlign = "right";
+
+ctx.fillText(
+`${Math.floor(currentXP)} / ${Math.floor(requiredXP)} XP`,
+barX + barWidth,
+170
+);
+
+ctx.textAlign = "left";
+
+return canvas.toBuffer();
+
+}
+
+// ================= END SINGLE LEVEL CARD ================= \\
+
 /* ================= INTERACTION ================= */
 
 client.on("interactionCreate", async (interaction) => {
