@@ -666,6 +666,137 @@ ctx.shadowBlur = 0;
   return canvas.toBuffer();
 }
 
+async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceRank) {
+
+  const width = 1000;
+  const height = 420;
+
+  const canvas = createCanvas(width, height);
+  const ctx = canvas.getContext("2d");
+
+  // Background
+  const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg?ex=69a8de91&is=69a78d11&hm=e57c1482112fbff9d967dbfc17b6a2bc209a32d5ccda71451e53d813dd774842&");
+  ctx.drawImage(background, 0, 0, width, height);
+
+  // Overlay
+  const overlay = ctx.createLinearGradient(0, 0, 0, height);
+  overlay.addColorStop(0, "rgba(0,0,0,0.25)");
+  overlay.addColorStop(1, "rgba(0,0,0,0.55)");
+  ctx.fillStyle = overlay;
+  ctx.fillRect(0, 0, width, height);
+
+  // Glass panel
+  ctx.fillStyle = "rgba(10,10,30,0.55)";
+  ctx.fillRect(40, 40, width - 80, height - 80);
+
+  // ===== Avatar (lebih kecil) =====
+  const avatar = await loadImage(
+    member.user.displayAvatarURL({ format: "png", size: 256 })
+  );
+
+  const avatarX = 120;
+  const avatarY = 210;
+  const avatarSize = 70;
+
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(avatarX, avatarY, avatarSize, 0, Math.PI * 2);
+  ctx.closePath();
+  ctx.clip();
+  ctx.drawImage(avatar, avatarX - avatarSize, avatarY - avatarSize, avatarSize * 2, avatarSize * 2);
+  ctx.restore();
+
+  // ===== Username =====
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "32px Sans";
+  ctx.textAlign = "center";
+  ctx.fillText(member.user.username, width / 2 + 50, 110);
+
+  ctx.textAlign = "left";
+
+  // ===== EXP Calculations =====
+  const chatLevel = Math.floor(0.1 * Math.sqrt(chatExp));
+  const voiceLevel = Math.floor(0.1 * Math.sqrt(voiceExp));
+
+  const nextChat = Math.pow((chatLevel + 1) / 0.1, 2);
+  const prevChat = Math.pow(chatLevel / 0.1, 2);
+
+  const nextVoice = Math.pow((voiceLevel + 1) / 0.1, 2);
+  const prevVoice = Math.pow(voiceLevel / 0.1, 2);
+
+  const chatCurrent = Math.floor(chatExp - prevChat);
+  const chatRequired = Math.floor(nextChat - prevChat);
+
+  const voiceCurrent = Math.floor(voiceExp - prevVoice);
+  const voiceRequired = Math.floor(nextVoice - prevVoice);
+
+  const chatProgress = chatCurrent / chatRequired;
+  const voiceProgress = voiceCurrent / voiceRequired;
+
+  // ===== Bar Settings =====
+  const barWidth = 520;
+  const barHeight = 26;
+  const barX = 300;
+
+  // ===== CHAT BAR =====
+  const chatY = 180;
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "22px Sans";
+  ctx.fillText("💬 CHAT", barX, chatY - 10);
+
+  ctx.font = "18px Sans";
+  ctx.textAlign = "right";
+  ctx.fillText(`${chatCurrent} / ${chatRequired} XP`, barX + barWidth, chatY - 10);
+  ctx.textAlign = "left";
+
+  ctx.fillStyle = "#2C2F33";
+  ctx.fillRect(barX, chatY, barWidth, barHeight);
+
+  const chatGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+  chatGradient.addColorStop(0, "#1ABC9C");
+  chatGradient.addColorStop(1, "#00E5FF");
+
+  ctx.fillStyle = chatGradient;
+  ctx.fillRect(barX, chatY, barWidth * chatProgress, barHeight);
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "18px Sans";
+  ctx.fillText(`Rank #${chatRank}`, barX + 180, chatY - 10);
+
+  ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
+
+  // ===== VOICE BAR =====
+  const voiceY = 280;
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "22px Sans";
+  ctx.fillText("🎧 VOICE", barX, voiceY - 10);
+
+  ctx.font = "18px Sans";
+  ctx.textAlign = "right";
+  ctx.fillText(`${voiceCurrent} / ${voiceRequired} XP`, barX + barWidth, voiceY - 10);
+  ctx.textAlign = "left";
+
+  ctx.fillStyle = "#2C2F33";
+  ctx.fillRect(barX, voiceY, barWidth, barHeight);
+
+  const voiceGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+  voiceGradient.addColorStop(0, "#9B59B6");
+  voiceGradient.addColorStop(1, "#3498DB");
+
+  ctx.fillStyle = voiceGradient;
+  ctx.fillRect(barX, voiceY, barWidth * voiceProgress, barHeight);
+
+  ctx.fillStyle = "#FFFFFF";
+  ctx.font = "18px Sans";
+  ctx.fillText(`Rank #${voiceRank}`, barX + 180, voiceY - 10);
+
+  ctx.fillText(`LVL ${voiceLevel}`, barX + barWidth + 20, voiceY + 20);
+
+  return canvas.toBuffer();
+}
+
 /* ================= INTERACTION ================= */
 
 client.on("interactionCreate", async (interaction) => {
