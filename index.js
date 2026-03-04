@@ -666,6 +666,8 @@ ctx.shadowBlur = 0;
   return canvas.toBuffer();
 }
 
+// DUAL CARD \\
+
 async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceRank) {
 
   const width = 1000;
@@ -694,7 +696,7 @@ async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceR
     member.user.displayAvatarURL({ format: "png", size: 256 })
   );
 
-  const avatarX = 120;
+  const avatarX = 150;
   const avatarY = 210;
   const avatarSize = 70;
 
