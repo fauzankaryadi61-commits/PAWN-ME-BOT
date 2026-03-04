@@ -773,8 +773,8 @@ ctx.shadowBlur = 0;
 
   ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
 
-  // ===== VOICE BAR =====
-  const voiceY = 280;
+ // ===== VOICE BAR =====
+const voiceY = 280;
 
 ctx.fillStyle = "#FFFFFF";
 ctx.font = "22px Sans";
@@ -785,26 +785,30 @@ ctx.textAlign = "right";
 ctx.fillText(`${voiceCurrent} / ${voiceRequired} XP`, barX + barWidth, voiceY - 10);
 ctx.textAlign = "left";
 
+// background bar
 ctx.fillStyle = "#2C2F33";
 ctx.fillRect(barX, voiceY, barWidth, barHeight);
 
-  const voiceGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+// gradient
+const voiceGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
 voiceGradient.addColorStop(0, "#9B59B6");
 voiceGradient.addColorStop(1, "#3498DB");
 
+// glow
 ctx.shadowColor = "#3498DB";
 ctx.shadowBlur = 20;
 
+// fill progress
 ctx.fillStyle = voiceGradient;
 ctx.fillRect(barX, voiceY, barWidth * voiceProgress, barHeight);
 
 ctx.shadowBlur = 0;
 
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "18px Sans";
-  ctx.fillText(`Rank #${voiceRank}`, barX + 180, voiceY - 10);
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "18px Sans";
+ctx.fillText(`Rank #${voiceRank}`, barX + 180, voiceY - 10);
 
-  ctx.fillText(`LVL ${voiceLevel}`, barX + barWidth + 20, voiceY + 20);
+ctx.fillText(`LVL ${voiceLevel}`, barX + barWidth + 20, voiceY + 20);
 
   return canvas.toBuffer();
 }
