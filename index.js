@@ -216,12 +216,27 @@ client.once("ready", async () => {
     },
     
     {
-      name: "pmlevel",
-      description: "Cek level kamu atau user lain",
-      options: [
-        { name: "user", description: "Target user", type: 6, required: false }
+  name: "pmlevel",
+  description: "Cek level kamu atau user lain",
+  options: [
+    {
+      name: "kategori",
+      description: "Kategori level",
+      type: 3,
+      required: false,
+      choices: [
+        { name: "Chat", value: "chat" },
+        { name: "Voice", value: "voice" }
       ]
     },
+    {
+      name: "user",
+      description: "Target user",
+      type: 6,
+      required: false
+    }
+  ]
+},
     {
   name: "pmleaderboard",
   description: "Lihat leaderboard Pawn Me",
