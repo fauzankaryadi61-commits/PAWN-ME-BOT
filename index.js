@@ -525,6 +525,27 @@ client.on("guildMemberAdd", async (member) => {
   sendWelcome(member, channel);
 });
 
+// ===== LEVEL SYSTEM =====
+function getLevelData(exp) {
+
+let level = 0;
+let xpNeeded = 100;
+let currentXP = exp;
+
+while (currentXP >= xpNeeded) {
+  currentXP -= xpNeeded;
+  level++;
+  xpNeeded = Math.floor(xpNeeded * 1.5);
+}
+
+return {
+  level: level,
+  currentXP: currentXP,
+  requiredXP: xpNeeded
+};
+
+}
+
 /* ================= LEVEL CARD ================= */
 
 async function generateLevelCard(member, totalExp, rank) {
@@ -576,14 +597,13 @@ ctx.lineWidth = 2;
 ctx.strokeRect(40, 40, width - 80, height - 80);
 
   // === Hitung Level ===
-  const level = Math.floor(0.1 * Math.sqrt(totalExp));
-  const nextLevelExp = Math.pow((level + 1) / 0.1, 2);
-  const currentLevelExp = Math.pow(level / 0.1, 2);
+  const levelData = getLevelData(totalExp);
 
-  const currentXP = Math.floor(totalExp - currentLevelExp);
-  const requiredXP = Math.floor(nextLevelExp - currentLevelExp);
+const level = levelData.level;
+const currentXP = levelData.currentXP;
+const requiredXP = levelData.requiredXP;
 
-  const progress = currentXP / requiredXP;
+const progress = currentXP / requiredXP;
 
   // === Avatar ===
   const avatar = await loadImage(
@@ -753,23 +773,17 @@ const barX = 320;
 
 
 // ================= EXP DATA ================= \\
-const chatExp = data.chat.total || 0;
-const voiceExp = data.voice.total || 0;
+const chatData = getLevelData(chatExp);
+const voiceData = getLevelData(voiceExp);
 
-const chatLevel = Math.floor(0.1 * Math.sqrt(chatExp));
-const voiceLevel = Math.floor(0.1 * Math.sqrt(voiceExp));
+const chatLevel = chatData.level;
+const voiceLevel = voiceData.level;
 
-const chatNext = Math.pow((chatLevel + 1) / 0.1, 2);
-const chatCurrent = Math.pow(chatLevel / 0.1, 2);
+const chatXP = chatData.currentXP;
+const voiceXP = voiceData.currentXP;
 
-const voiceNext = Math.pow((voiceLevel + 1) / 0.1, 2);
-const voiceCurrent = Math.pow(voiceLevel / 0.1, 2);
-
-const chatXP = chatExp - chatCurrent;
-const chatNeed = chatNext - chatCurrent;
-
-const voiceXP = voiceExp - voiceCurrent;
-const voiceNeed = voiceNext - voiceCurrent;
+const chatNeed = chatData.requiredXP;
+const voiceNeed = voiceData.requiredXP;
 
 const chatProgress = chatXP / chatNeed;
 const voiceProgress = voiceXP / voiceNeed;
@@ -780,7 +794,7 @@ const chatY = 170;
 
 ctx.fillStyle = "#FFFFFF";
 ctx.font = "20px Montserrat";
-ctx.fillText("💬 CHAT", barX, chatY - 10);
+ctx.fillText("CHAT", barX, chatY - 10);
 
 ctx.textAlign = "right";
 ctx.fillText(`${Math.floor(chatXP)} / ${Math.floor(chatNeed)} XP`, barX + barWidth, chatY - 10);
@@ -806,7 +820,7 @@ const voiceY = 240;
 
 ctx.fillStyle = "#FFFFFF";
 ctx.font = "20px Montserrat";
-ctx.fillText("🎧 VOICE", barX, voiceY - 10);
+ctx.fillText("?VOICE", barX, voiceY - 10);
 
 ctx.textAlign = "right";
 ctx.fillText(`${Math.floor(voiceXP)} / ${Math.floor(voiceNeed)} XP`, barX + barWidth, voiceY - 10);
@@ -968,67 +982,81 @@ client.on("interactionCreate", async (interaction) => {
 
   if (interaction.commandName === "pmlevel") {
 
-    await interaction.deferReply();
+  await interaction.deferReply();
 
-    const user = interaction.options.getUser("user") || interaction.user;
-    const kategori = interaction.options.getString("kategori");
+  const user = interaction.options.getUser("user") || interaction.user;
+  const kategori = interaction.options.getString("kategori");
 
-    if (!levels[user.id]) {
-      levels[user.id] = {
-        chat: { total: 0 },
-        voice: { total: 0 }
-      };
-      saveLevels();
-    }
+  if (!levels[user.id]) {
+    levels[user.id] = {
+      chat: { total: 0 },
+      voice: { total: 0 }
+    };
+    saveLevels();
+  }
 
-    const data = levels[user.id];
-    const member = await interaction.guild.members.fetch(user.id);
+  const data = levels[user.id];
+  const member = await interaction.guild.members.fetch(user.id);
 
-    const sorted = Object.entries(levels)
-      .map(([id, d]) => ({
-        id,
-        total: (d.chat?.total || 0) + (d.voice?.total || 0)
-      }))
-      .sort((a, b) => b.total - a.total);
+  // ================= HITUNG RANK CHAT =================
+  const sortedChat = Object.entries(levels)
+    .map(([id, d]) => ({
+      id,
+      total: d.chat?.total || 0
+    }))
+    .sort((a, b) => b.total - a.total);
 
-    const rank = sorted.findIndex(u => u.id === user.id) + 1;
+  const rankChat = sortedChat.findIndex(u => u.id === user.id) + 1;
 
-    let buffer;
 
-    if (kategori === "chat") {
+  // ================= HITUNG RANK VOICE =================
+  const sortedVoice = Object.entries(levels)
+    .map(([id, d]) => ({
+      id,
+      total: d.voice?.total || 0
+    }))
+    .sort((a, b) => b.total - a.total);
 
-      buffer = await generateSingleLevelCard(
-        member,
-        data.chat.total || 0,
-        rank,
-        "chat"
-      );
+  const rankVoice = sortedVoice.findIndex(u => u.id === user.id) + 1;
 
-    } else if (kategori === "voice") {
 
-      buffer = await generateSingleLevelCard(
-        member,
-        data.voice.total || 0,
-        rank,
-        "voice"
-      );
+  let buffer;
 
-    } else {
+  if (kategori === "chat") {
 
-      buffer = await generateDualLevelCard(
-        member,
-        data.chat.total || 0,
-        data.voice.total || 0,
-        rank
-      );
+    buffer = await generateSingleLevelCard(
+      member,
+      data.chat.total || 0,
+      rankChat,
+      "chat"
+    );
 
-    }
+  } else if (kategori === "voice") {
 
-    const attachment = new MessageAttachment(buffer, "pm-level.png");
+    buffer = await generateSingleLevelCard(
+      member,
+      data.voice.total || 0,
+      rankVoice,
+      "voice"
+    );
 
-    await interaction.editReply({
-      files: [attachment]
-    });
+  } else {
+
+    buffer = await generateDualLevelCard(
+      member,
+      data,
+      rankChat,
+      rankVoice
+    );
+
+  }
+
+  const attachment = new MessageAttachment(buffer, "pm-level.png");
+
+  await interaction.editReply({
+    files: [attachment]
+  });
+
 
   // ================= WELCOME =================
 
