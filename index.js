@@ -570,7 +570,7 @@ ctx.strokeRect(40, 40, width - 80, height - 80);
 ctx.strokeStyle = "#1ABC9C";
 ctx.lineWidth = 6;
 ctx.beginPath();
-ctx.arc(140, 175, 90, 0, Math.PI * 2);
+ctx.arc(155, 175, 90, 0, Math.PI * 2);
 ctx.stroke();
 
 // Status dot
