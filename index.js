@@ -954,60 +954,67 @@ client.on("interactionCreate", async (interaction) => {
     
     if (interaction.commandName === "pmlevel") {
 
-await interaction.deferReply();
+  await interaction.deferReply();
 
-const user = interaction.options.getUser("user") || interaction.user;
-const kategori = interaction.options.getString("kategori");
+  const user = interaction.options.getUser("user") || interaction.user;
+  const kategori = interaction.options.getString("kategori");
 
-if (!levels[user.id]) {
-levels[user.id] = {
-chat: { total: 0 },
-voice: { total: 0 }
-};
-saveLevels();
-}
+  if (!levels[user.id]) {
+    levels[user.id] = {
+      chat: { total: 0 },
+      voice: { total: 0 }
+    };
+    saveLevels();
+  }
 
-const data = levels[user.id];
+  const data = levels[user.id];
+  const member = await interaction.guild.members.fetch(user.id);
 
-const member = await interaction.guild.members.fetch(user.id);
+  const totalExp = data.chat.total + data.voice.total;
 
-// ===== HITUNG RANK CHAT =====
-const sortedChat = Object.entries(levels)
-.map(([id, d]) => ({
-id,
-value: d.chat?.total || 0
-}))
-.sort((a,b) => b.value - a.value);
+  const sorted = Object.entries(levels)
+    .map(([id, d]) => ({
+      id,
+      total: (d.chat?.total || 0) + (d.voice?.total || 0)
+    }))
+    .sort((a, b) => b.total - a.total);
 
-const rankChat = sortedChat.findIndex(u => u.id === user.id) + 1;
+  const rank = sorted.findIndex(u => u.id === user.id) + 1;
 
+  let buffer;
 
-// ===== HITUNG RANK VOICE =====
-const sortedVoice = Object.entries(levels)
-.map(([id, d]) => ({
-id,
-value: d.voice?.total || 0
-}))
-.sort((a,b) => b.value - a.value);
+  if (kategori === "chat") {
 
-const rankVoice = sortedVoice.findIndex(u => u.id === user.id) + 1;
+    buffer = await generateSingleLevelCard(
+      member,
+      data.chat.total || 0,
+      rank,
+      "chat"
+    );
 
+  } else if (kategori === "voice") {
 
-// ================= MODE =================
+    buffer = await generateSingleLevelCard(
+      member,
+      data.voice.total || 0,
+      rank,
+      "voice"
+    );
 
-// ===== MODE CHAT =====
-if (kategori === "chat") {
+  } else {
 
-const buffer = await generateSingleLevelCard(
-member,
-data.chat.total,
-rankChat,
-"chat"
-);
+    buffer = await generateDualLevelCard(
+      member,
+      data.chat.total || 0,
+      data.voice.total || 0,
+      rank
+    );
 
-const attachment = new MessageAttachment(buffer, "pm-chat-level.png");
+  }
 
-return interaction.reply({ files: [attachment] });
+  const attachment = new MessageAttachment(buffer, "pm-level.png");
+
+  return interaction.editReply({ files: [attachment] });
 
 }
 
