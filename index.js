@@ -617,12 +617,6 @@ ctx.shadowBlur = 0;
   ctx.font = "32px Sans";
   ctx.fillText(member.user.username, 300, 160);
 
-  // XP Right Aligned (P sejajar dengan level)
-  ctx.font = "22px Sans";
-  ctx.textAlign = "right";
-  ctx.fillText(`${currentXP} / ${requiredXP} XP`, xpX, 160);
-  ctx.textAlign = "left";
-
   // === Progress Bar ===
   const barWidth = 520;
   const barHeight = 30;
@@ -632,6 +626,13 @@ ctx.shadowBlur = 0;
 
   roundRect(ctx, barX, barY, barWidth, barHeight, 20, "#2C2F33");
 
+  // XP Right Aligned (P sejajar dengan level)
+  ctx.font = "22px Sans";
+  ctx.textAlign = "right";
+  ctx.fillText(`${currentXP} / ${requiredXP} XP`, xpX, 160);
+  ctx.textAlign = "left";
+
+  
 // Gradient
 const gradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
 gradient.addColorStop(0, "#1ABC9C");
