@@ -570,21 +570,21 @@ ctx.strokeRect(40, 40, width - 80, height - 80);
 ctx.strokeStyle = "#1ABC9C";
 ctx.lineWidth = 6;
 ctx.beginPath();
-ctx.arc(155, 175, 90, 0, Math.PI * 2);
+ctx.arc(160, 175, 90, 0, Math.PI * 2);
 ctx.stroke();
 
 // Status dot
 ctx.fillStyle = "#00FF88";
 ctx.beginPath();
-ctx.arc(205, 235, 18, 0, Math.PI * 2);
+ctx.arc(225, 235, 18, 0, Math.PI * 2);
 ctx.fill();
 
   ctx.save();
   ctx.beginPath();
-  ctx.arc(140, 175, 90, 0, Math.PI * 2);
+  ctx.arc(160, 175, 90, 0, Math.PI * 2);
   ctx.closePath();
   ctx.clip();
-  ctx.drawImage(avatar, 50, 85, 180, 180);
+  ctx.drawImage(avatar, 70, 85, 180, 180);
   ctx.restore();
   
   ctx.beginPath();
