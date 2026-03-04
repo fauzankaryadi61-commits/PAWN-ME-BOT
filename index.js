@@ -666,152 +666,157 @@ ctx.shadowBlur = 0;
   return canvas.toBuffer();
 }
 
-// DUAL CARD \\
+// ================= DUAL LEVEL CARD SYSTEM ================= \\
 
-async function generateDualLevelCard(member, chatExp, voiceExp, chatRank, voiceRank) {
+async function generateDualLevelCard(member, data, rankChat, rankVoice) {
 
-  const width = 1000;
-  const height = 420;
+const width = 1000;
+const height = 350;
 
-  const canvas = createCanvas(width, height);
-  const ctx = canvas.getContext("2d");
+const canvas = createCanvas(width, height);
+const ctx = canvas.getContext("2d");
 
-  // Background
-  const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg?ex=69a8de91&is=69a78d11&hm=e57c1482112fbff9d967dbfc17b6a2bc209a32d5ccda71451e53d813dd774842&");
-  ctx.drawImage(background, 0, 0, width, height);
+// ================= HELPER ================= \\
+function roundRect(ctx, x, y, width, height, radius, color) {
+ctx.fillStyle = color;
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + width - radius, y);
+ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+ctx.lineTo(x + width, y + height - radius);
+ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+ctx.lineTo(x + radius, y + height);
+ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+ctx.fill();
+}
 
-  // Overlay
-  const overlay = ctx.createLinearGradient(0, 0, 0, height);
-  overlay.addColorStop(0, "rgba(0,0,0,0.25)");
-  overlay.addColorStop(1, "rgba(0,0,0,0.55)");
-  ctx.fillStyle = overlay;
-  ctx.fillRect(0, 0, width, height);
+// ================= BACKGROUND ================= \\
+const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg");
+ctx.drawImage(background, 0, 0, width, height);
 
-  // Glass panel
-  ctx.fillStyle = "rgba(10,10,30,0.55)";
-  ctx.fillRect(40, 40, width - 80, height - 80);
+const overlay = ctx.createLinearGradient(0, 0, 0, height);
+overlay.addColorStop(0, "rgba(0,0,0,0.3)");
+overlay.addColorStop(1, "rgba(0,0,0,0.6)");
+ctx.fillStyle = overlay;
+ctx.fillRect(0, 0, width, height);
 
-  // ===== Avatar (lebih kecil) =====
-  const avatar = await loadImage(
-    member.user.displayAvatarURL({ format: "png", size: 256 })
-  );
+roundRect(ctx, 40, 40, width - 80, height - 80, 30, "rgba(10,10,30,0.55)");
 
-  const avatarX = 150;
-  const avatarY = 210;
-  const avatarSize = 70;
 
-  ctx.save();
-  ctx.beginPath();
-  ctx.arc(avatarX, avatarY, avatarSize, 0, Math.PI * 2);
-  ctx.closePath();
-  ctx.clip();
-  ctx.drawImage(avatar, avatarX - avatarSize, avatarY - avatarSize, avatarSize * 2, avatarSize * 2);
-  ctx.restore();
+// ================= AVATAR ================= \\
+const avatar = await loadImage(
+member.user.displayAvatarURL({ format: "png", size: 256 })
+);
 
-  // ===== Username =====
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "32px Sans";
-  ctx.textAlign = "center";
-  ctx.fillText(member.user.username, width / 2 + 50, 110);
+ctx.save();
+ctx.beginPath();
+ctx.arc(170, 175, 85, 0, Math.PI * 2);
+ctx.closePath();
+ctx.clip();
+ctx.drawImage(avatar, 85, 90, 170, 170);
+ctx.restore();
 
-  ctx.textAlign = "left";
+ctx.strokeStyle = "#1ABC9C";
+ctx.lineWidth = 6;
+ctx.beginPath();
+ctx.arc(170, 175, 90, 0, Math.PI * 2);
+ctx.stroke();
 
-  // ===== EXP Calculations =====
-  const chatLevel = Math.floor(0.1 * Math.sqrt(chatExp));
-  const voiceLevel = Math.floor(0.1 * Math.sqrt(voiceExp));
 
-  const nextChat = Math.pow((chatLevel + 1) / 0.1, 2);
-  const prevChat = Math.pow(chatLevel / 0.1, 2);
+// ================= USERNAME ================= \\
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "32px Sans";
+ctx.fillText(member.user.username, 320, 120);
 
-  const nextVoice = Math.pow((voiceLevel + 1) / 0.1, 2);
-  const prevVoice = Math.pow(voiceLevel / 0.1, 2);
 
-  const chatCurrent = Math.floor(chatExp - prevChat);
-  const chatRequired = Math.floor(nextChat - prevChat);
+// ================= BAR SETTINGS ================= \\
+const barWidth = 500;
+const barHeight = 28;
+const barX = 320;
 
-  const voiceCurrent = Math.floor(voiceExp - prevVoice);
-  const voiceRequired = Math.floor(nextVoice - prevVoice);
 
-  const chatProgress = chatCurrent / chatRequired;
-  const voiceProgress = voiceCurrent / voiceRequired;
+// ================= EXP DATA ================= \\
+const chatExp = data.chat.total || 0;
+const voiceExp = data.voice.total || 0;
 
-  // ===== Bar Settings =====
-  const barWidth = 520;
-  const barHeight = 26;
-  const barX = 300;
+const chatLevel = Math.floor(0.1 * Math.sqrt(chatExp));
+const voiceLevel = Math.floor(0.1 * Math.sqrt(voiceExp));
 
-  // ===== CHAT BAR =====
-  const chatY = 180;
+const chatNext = Math.pow((chatLevel + 1) / 0.1, 2);
+const chatCurrent = Math.pow(chatLevel / 0.1, 2);
 
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "22px Sans";
-  ctx.fillText("💬 CHAT", barX, chatY - 10);
+const voiceNext = Math.pow((voiceLevel + 1) / 0.1, 2);
+const voiceCurrent = Math.pow(voiceLevel / 0.1, 2);
 
-  ctx.font = "18px Sans";
-  ctx.textAlign = "right";
-  ctx.fillText(`${chatCurrent} / ${chatRequired} XP`, barX + barWidth, chatY - 10);
-  ctx.textAlign = "left";
+const chatXP = chatExp - chatCurrent;
+const chatNeed = chatNext - chatCurrent;
 
-  ctx.fillStyle = "#2C2F33";
-  ctx.fillRect(barX, voiceY, barWidth, barHeight);
+const voiceXP = voiceExp - voiceCurrent;
+const voiceNeed = voiceNext - voiceCurrent;
 
-  const chatGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
-  chatGradient.addColorStop(0, "#1ABC9C");
-  chatGradient.addColorStop(1, "#00E5FF");
+const chatProgress = chatXP / chatNeed;
+const voiceProgress = voiceXP / voiceNeed;
 
-  ctx.shadowColor = "#00E5FF";
-ctx.shadowBlur = 20;
 
-ctx.fillStyle = chatGradient;
-ctx.fillRect(barX, chatY, barWidth * chatProgress, barHeight);
-
-ctx.shadowBlur = 0;
-
-  ctx.fillStyle = "#FFFFFF";
-  ctx.font = "18px Sans";
-  ctx.fillText(`Rank #${chatRank}`, barX + 180, chatY - 10);
-
-  ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
-
- // ===== VOICE BAR =====
-const voiceY = 280;
+// ================= CHAT BAR ================= \\
+const chatY = 170;
 
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "22px Sans";
-ctx.fillText("🎧 VOICE", barX, voiceY - 10);
+ctx.font = "20px Sans";
+ctx.fillText("💬 CHAT", barX, chatY - 10);
 
-ctx.font = "18px Sans";
 ctx.textAlign = "right";
-ctx.fillText(`${voiceCurrent} / ${voiceRequired} XP`, barX + barWidth, voiceY - 10);
+ctx.fillText(`${Math.floor(chatXP)} / ${Math.floor(chatNeed)} XP`, barX + barWidth, chatY - 10);
 ctx.textAlign = "left";
 
-// background bar
-ctx.fillStyle = "#2C2F33";
-ctx.fillRect(barX, voiceY, barWidth, barHeight);
+roundRect(ctx, barX, chatY, barWidth, barHeight, 15, "#2C2F33");
 
-// gradient
+const chatGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
+chatGradient.addColorStop(0, "#1ABC9C");
+chatGradient.addColorStop(1, "#00E5FF");
+
+ctx.fillStyle = chatGradient;
+roundRect(ctx, barX, chatY, barWidth * chatProgress, barHeight, 15, chatGradient);
+
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "18px Sans";
+ctx.fillText(`Rank #${rankChat}`, barX + 170, chatY - 10);
+ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
+
+
+// ================= VOICE BAR ================= \\
+const voiceY = 240;
+
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "20px Sans";
+ctx.fillText("🎧 VOICE", barX, voiceY - 10);
+
+ctx.textAlign = "right";
+ctx.fillText(`${Math.floor(voiceXP)} / ${Math.floor(voiceNeed)} XP`, barX + barWidth, voiceY - 10);
+ctx.textAlign = "left";
+
+roundRect(ctx, barX, voiceY, barWidth, barHeight, 15, "#2C2F33");
+
 const voiceGradient = ctx.createLinearGradient(barX, 0, barX + barWidth, 0);
 voiceGradient.addColorStop(0, "#9B59B6");
 voiceGradient.addColorStop(1, "#3498DB");
 
-// glow
-ctx.shadowColor = "#3498DB";
-ctx.shadowBlur = 20;
-
-// fill progress
 ctx.fillStyle = voiceGradient;
-ctx.fillRect(barX, voiceY, barWidth * voiceProgress, barHeight);
-
-ctx.shadowBlur = 0;
+roundRect(ctx, barX, voiceY, barWidth * voiceProgress, barHeight, 15, voiceGradient);
 
 ctx.fillStyle = "#FFFFFF";
 ctx.font = "18px Sans";
-ctx.fillText(`Rank #${voiceRank}`, barX + 180, voiceY - 10);
-
+ctx.fillText(`Rank #${rankVoice}`, barX + 170, voiceY - 10);
 ctx.fillText(`LVL ${voiceLevel}`, barX + barWidth + 20, voiceY + 20);
 
-  return canvas.toBuffer();
+return canvas.toBuffer();
+
 }
+
+// ================= END DUAL LEVEL CARD ================= \\
 
 /* ================= INTERACTION ================= */
 
