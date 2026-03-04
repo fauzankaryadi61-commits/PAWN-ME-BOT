@@ -9,7 +9,17 @@ const {
   MessageEmbed
 } = require("discord.js");
 
-const { createCanvas, loadImage, registerFont } = require("canvas");registerFont("./fonts/DejaVuSans-Bold.ttf", {family: "DejaVu"});
+const { createCanvas, loadImage, registerFont } = require("canvas");
+
+registerFont("./fonts/DejaVuSans-Bold.ttf", {family: "DejaVu"});
+
+registerFont("./fonts/montserrat.bold.ttf", {
+  family: "MontserratBold"
+});
+
+registerFont("./fonts/montserrat.regular.ttf", {
+  family: "Montserrat"
+});
 
 const { MessageAttachment } = require("discord.js");
 
@@ -618,10 +628,10 @@ ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 2;
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "24px DejaVu";
+  ctx.font = "24px Montserrat";
   ctx.fillText(`RANK #${rank}`, 300, 90);
 
-  ctx.font = "28px DejaVu";
+  ctx.font = "28px Montserrat";
 ctx.fillStyle = "#00E5FF";
 ctx.shadowColor = "#00E5FF";
 ctx.shadowBlur = 15;
@@ -630,7 +640,7 @@ ctx.shadowBlur = 0;
 
   // Username
   ctx.fillStyle = "#FFFFFF";
-  ctx.font = "32px DejaVu";
+  ctx.font = "32px MontserratBold";
   ctx.fillText(member.user.username, 300, 160);
 
   // === Progress Bar ===
@@ -643,7 +653,7 @@ ctx.shadowBlur = 0;
   roundRect(ctx, barX, barY, barWidth, barHeight, 20, "#2C2F33");
 
   // XP Right Aligned (P sejajar dengan level)
-  ctx.font = "22px DejaVu";
+  ctx.font = "22px Montserrat";
   ctx.textAlign = "right";
   ctx.fillText(`${currentXP} / ${requiredXP} XP`, xpX, 160);
   ctx.textAlign = "left";
@@ -734,7 +744,7 @@ ctx.stroke();
 
 // ================= USERNAME ================= \\
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "32px DejaVu";
+ctx.font = "32px MontserratBold";
 ctx.fillText(member.user.username, 320, 120);
 
 
@@ -771,7 +781,7 @@ const voiceProgress = voiceXP / voiceNeed;
 const chatY = 170;
 
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "20px DejaVu";
+ctx.font = "20px Montserrat";
 ctx.fillText("💬 CHAT", barX, chatY - 10);
 
 ctx.textAlign = "right";
@@ -788,7 +798,7 @@ ctx.fillStyle = chatGradient;
 roundRect(ctx, barX, chatY, barWidth * chatProgress, barHeight, 15, chatGradient);
 
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "18px DejaVu";
+ctx.font = "18px Montserrat";
 ctx.fillText(`Rank #${rankChat}`, barX + 170, chatY - 10);
 ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
 
@@ -797,7 +807,7 @@ ctx.fillText(`LVL ${chatLevel}`, barX + barWidth + 20, chatY + 20);
 const voiceY = 240;
 
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "20px DejaVu";
+ctx.font = "20px Montserrat";
 ctx.fillText("🎧 VOICE", barX, voiceY - 10);
 
 ctx.textAlign = "right";
@@ -814,7 +824,7 @@ ctx.fillStyle = voiceGradient;
 roundRect(ctx, barX, voiceY, barWidth * voiceProgress, barHeight, 15, voiceGradient);
 
 ctx.fillStyle = "#FFFFFF";
-ctx.font = "18px DejaVu";
+ctx.font = "18px Montserrat";
 ctx.fillText(`Rank #${rankVoice}`, barX + 170, voiceY - 10);
 ctx.fillText(`LVL ${voiceLevel}`, barX + barWidth + 20, voiceY + 20);
 
