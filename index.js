@@ -952,6 +952,8 @@ client.on("interactionCreate", async (interaction) => {
 
   const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
 
+  // ================= PMLEVEL =================
+
   if (interaction.commandName === "pmlevel") {
 
     await interaction.deferReply();
@@ -1018,13 +1020,12 @@ client.on("interactionCreate", async (interaction) => {
 
   }
 
-}); 
+  // ================= WELCOME =================
 
-if (interaction.commandName === "welcome") {
+  if (interaction.commandName === "welcome") {
 
-  const user = interaction.options.getUser("user1");
-  const member = await interaction.guild.members.fetch(user.id);
-
+    const user = interaction.options.getUser("user1");
+    const member = await interaction.guild.members.fetch(user.id);
   await sendWelcome(member, interaction.channel);
 
   return interaction.reply({ content: "Test welcome terkirim.", ephemeral: true });
