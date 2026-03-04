@@ -528,7 +528,7 @@ function roundRect(ctx, x, y, width, height, radius, fillColor) {
   const ctx = canvas.getContext("2d");
 
   // Background
-const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg?ex=69a6e451&is=69a592d1&hm=f693f792c33e0f13f84bbd110776e0c3c653709aec7603cf2814e992f40c1e25&");
+const background = await loadImage("https://cdn.discordapp.com/attachments/1466412308128465031/1478023678355832833/image0_91.jpg?ex=69a8de91&is=69a78d11&hm=e57c1482112fbff9d967dbfc17b6a2bc209a32d5ccda71451e53d813dd774842&");
 ctx.drawImage(background, 0, 0, width, height);
 
 // (Optional) subtle gradient overlay kalau kamu pakai
