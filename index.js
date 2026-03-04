@@ -1000,7 +1000,6 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
 
-  }
   // ================= WELCOME =================
 
   if (interaction.commandName === "welcome") {
