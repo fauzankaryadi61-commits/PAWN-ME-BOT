@@ -985,13 +985,11 @@ ctx.stroke();
 
 // ================= LEVEL CALC ================= \\
 
-const level = Math.floor(0.1 * Math.sqrt(exp));
+const levelData = getLevelData(exp);
 
-const nextLevel = Math.pow((level + 1) / 0.1, 2);
-const currentLevel = Math.pow(level / 0.1, 2);
-
-const currentXP = exp - currentLevel;
-const requiredXP = nextLevel - currentLevel;
+const level = levelData.level;
+const currentXP = levelData.currentXP;
+const requiredXP = levelData.requiredXP;
 
 const progress = currentXP / requiredXP;
 
