@@ -1939,7 +1939,9 @@ if (interaction.isModalSubmit() && interaction.customId === "modal_remove_reward
 
     await interaction.editReply("Terima kasih! Saran kamu sudah terkirim.");
   }
+}
 
+});
 // ================= LEVEL LEADERBOARD ================= \\
 
   setInterval(async () => {
