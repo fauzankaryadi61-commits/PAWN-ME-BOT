@@ -1136,6 +1136,7 @@ client.on("interactionCreate", async (interaction) => {
   await interaction.editReply({
     files: [attachment]
   });
+}
 
 
   // ================= WELCOME =================
