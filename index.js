@@ -686,7 +686,7 @@ const progress = currentXP / requiredXP;
 
   // === Avatar ===
   const avatar = await loadImage(
-    member.user.displayAvatarURL({ format: "png", size: 256 })
+    member.user.displayAvatarURL({ extension: "png", size: 256 })
   );
 
   // Avatar border
@@ -821,8 +821,7 @@ roundRect(ctx, 40, 40, width - 80, height - 80, 30, "rgba(10,10,30,0.55)");
 
 // ================= AVATAR ================= \\
 const avatar = await loadImage(
-member.user.displayAvatarURL({ format: "png", size: 256 })
-);
+member.user.displayAvatarURL({ extension: "png", size: 256 })
 
 ctx.save();
 ctx.beginPath();
@@ -965,8 +964,7 @@ roundRect(ctx, 40, 40, width - 80, height - 80, 30, "rgba(10,10,30,0.6)");
 // ================= AVATAR ================= \\
 
 const avatar = await loadImage(
-member.user.displayAvatarURL({ format: "png", size: 256 })
-);
+member.user.displayAvatarURL({ extension: "png", size: 256 })
 
 ctx.save();
 ctx.beginPath();
@@ -1520,8 +1518,10 @@ ephemeral: true
 
 }
 
-}
+
   if (interaction.isButton()) {
+
+  await interaction.deferUpdate();
 
   if (interaction.customId === "config_exp") {
 
