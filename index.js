@@ -1439,7 +1439,6 @@ const row2 = new MessageActionRow().addComponents(
       interaction.reply(`${user.tag} berhasil di-ban.`);
       if (logChannel) logChannel.send(`🔨 ${user.tag} di-ban.\nAlasan: ${reason}`);
     }
-  }
 
 if (interaction.commandName === "pmexpadd") {
 
