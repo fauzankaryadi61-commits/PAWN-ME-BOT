@@ -1547,6 +1547,8 @@ ephemeral:true
 
 }
 
+}
+
 });
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
