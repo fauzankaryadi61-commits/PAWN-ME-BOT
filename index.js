@@ -50,15 +50,26 @@ if (!fs.existsSync(LEVEL_FILE)) {
 
 if (!fs.existsSync(CONFIG_FILE)) {
   fs.writeFileSync(CONFIG_FILE, JSON.stringify({
-    chat_exp: 5,
-    chat_cooldown: 10,
-    voice_exp_per_minute: 1,
-    voice_minimum_minutes: 1,
-    booster_multiplier: 1.5,
-    double_exp: false,
-    double_exp_multiplier: 2,
-    role_rewards_enabled: false
-  }, null, 2));
+  chat_exp: 5,
+  chat_cooldown: 10,
+  voice_exp_per_minute: 1,
+  voice_minimum_minutes: 1,
+
+  booster_multiplier: 1.5,
+
+  double_exp: false,
+  double_exp_multiplier: 2,
+
+  level_up_enabled: true,
+  level_up_channel: null,
+  level_up_mention: true,
+
+  role_rewards_enabled: false,
+  role_rewards: {},
+
+  rank_mode_enabled: false
+
+}, null, 2));
 }
 
 levels = JSON.parse(fs.readFileSync(LEVEL_FILE));
