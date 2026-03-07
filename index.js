@@ -650,6 +650,53 @@ sendWelcome(member, channel);
 
 /* ================= LEVEL CARD SYSTEM ================= */
 
+async function generateDualLevelCard(member,data){
+
+const canvas = createCanvas(1000,400);
+const ctx = canvas.getContext("2d");
+
+const bg = await loadImage("./assets/level-bg.png");
+ctx.drawImage(bg,0,0,1000,400);
+
+/* ===== AVATAR ===== */
+
+const avatar = await loadImage(
+member.user.displayAvatarURL({extension:"png",size:256})
+);
+
+ctx.save();
+ctx.beginPath();
+ctx.arc(120,200,80,0,Math.PI*2,true);
+ctx.closePath();
+ctx.clip();
+ctx.drawImage(avatar,40,120,160,160);
+ctx.restore();
+
+/* ===== USERNAME ===== */
+
+ctx.fillStyle="#ffffff";
+ctx.font="bold 40px Sans";
+ctx.fillText(member.user.username,240,140);
+
+/* ===== CHAT EXP ===== */
+
+const chatExp=data.chat?.total||0;
+
+ctx.font="28px Sans";
+ctx.fillText(`Chat EXP: ${chatExp}`,240,200);
+
+/* ===== VOICE EXP ===== */
+
+const voiceExp=data.voice?.total||0;
+
+ctx.fillText(`Voice EXP: ${voiceExp}`,240,250);
+
+return canvas.toBuffer();
+
+}
+
+/* ================= LEVEL CARD SYSTEM ================= */
+
 async function generateLevelCard(member, totalExp, rank){
 
 const width = 1000;
