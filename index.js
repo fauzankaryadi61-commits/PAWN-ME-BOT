@@ -1202,6 +1202,8 @@ setInterval(async () => {
 
 }, 60 * 60 * 1000);
 
+});
+
 /* ================= BOT LOGIN ================= */
 
 client.login(TOKEN);
