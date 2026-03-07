@@ -1395,7 +1395,7 @@ if (interaction.commandName === "pmleaderboard") {
     let chatTop = getSorted("chat");
     let voiceTop = getSorted("voice");
 
-    await interaction.guild.members.fetch({ force: true });
+    await interaction.guild.members.fetch();
 
     const guildMembers = interaction.guild.members.cache
       .filter(m => !m.user.bot)
