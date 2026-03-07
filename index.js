@@ -1596,7 +1596,6 @@ const row2 = new MessageActionRow().addComponents(
  
 }
 
-}
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
 
