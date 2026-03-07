@@ -820,7 +820,6 @@ files:[new MessageAttachment(buffer,"pm-level.png")]
 
 }
 
-
 /* ===== TOTAL EXP ===== */
 
 const totalExp = (data.chat?.total || 0) + (data.voice?.total || 0);
