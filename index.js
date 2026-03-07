@@ -979,6 +979,38 @@ ephemeral:true
 
 }
 
+/* ===== MANAGE REWARDS ===== */
+
+if (interaction.customId === "config_manage_rewards") {
+
+  if (!config.role_rewards || Object.keys(config.role_rewards).length === 0) {
+
+    return interaction.reply({
+      content: "Belum ada role reward yang diatur.",
+      ephemeral: true
+    });
+
+  }
+
+  let text = "**Role Rewards yang sudah diatur:**\n\n";
+
+  for (const [level, roleId] of Object.entries(config.role_rewards)) {
+    text += `**Level ${level}** → <@&${roleId}>\n`;
+  }
+
+  const embed = new MessageEmbed()
+    .setColor("#3498DB")
+    .setTitle("📋 Current Role Rewards")
+    .setDescription(text)
+    .setTimestamp();
+
+  return interaction.reply({
+    embeds: [embed],
+    ephemeral: true
+  });
+
+}
+
 
 /* ===== MONTHLY SCHEDULER ===== */
 
