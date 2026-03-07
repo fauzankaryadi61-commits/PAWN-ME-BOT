@@ -1145,7 +1145,6 @@ ephemeral:true
 
 }
 
-});
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
 
 setInterval(async () => {
