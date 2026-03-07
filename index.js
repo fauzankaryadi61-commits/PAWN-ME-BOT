@@ -370,7 +370,64 @@ client.once("ready", async () => {
     {
       name: "pmmonthly",
       description: "Trigger monthly leaderboard manual"
-    }
+    },
+    {
+  name: "pmxpadd",
+  description: "Tambah XP ke member",
+  options: [
+    { name: "user", description: "Member", type: 6, required: true },
+    { name: "xp", description: "Jumlah XP yang ditambah", type: 4, required: true }
+  ]
+},
+
+{
+  name: "pmxpreset",
+  description: "Reset XP member",
+  options: [
+    {
+      name: "mode",
+      description: "Reset mode (server untuk semua, atau pilih kategori)",
+      type: 3,
+      required: true,
+      choices: [
+        { name: "Server (Reset Semua)", value: "server" },
+        { name: "Chat", value: "chat" },
+        { name: "Voice", value: "voice" }
+      ]
+    },
+    { name: "user", description: "Member (opsional, jika ingin reset 1 member)", type: 6, required: false }
+  ]
+},
+
+{
+  name: "pmxpremove",
+  description: "Kurangi XP member",
+  options: [
+    { name: "user", description: "Member", type: 6, required: true },
+    {
+      name: "kategori",
+      description: "Kategori XP",
+      type: 3,
+      required: true,
+      choices: [
+        { name: "Chat", value: "chat" },
+        { name: "Voice", value: "voice" }
+      ]
+    },
+    {
+      name: "xp",
+      description: "Jumlah XP atau pilihan",
+      type: 3,
+      required: true,
+      choices: [
+        { name: "Angka (input manual)", value: "custom" },
+        { name: "Semua (all)", value: "all" },
+        { name: "Setengah (half)", value: "half" }
+      ]
+    },
+    { name: "jumlah", description: "Masukkan jumlah jika pilih 'Angka'", type: 4, required: false }
+  ]
+} 
 
   ];
 
