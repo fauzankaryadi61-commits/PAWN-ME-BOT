@@ -1145,6 +1145,461 @@ ephemeral:true
 
 }
 
+if (!interaction.isCommand()) return;
+
+const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
+
+/* ================= PING ================= */
+
+if (interaction.commandName === "ping") {
+
+return interaction.reply("pong");
+
+}
+
+/* ================= WELCOME TEST ================= */
+
+if (interaction.commandName === "welcome") {
+
+const user = interaction.options.getUser("user1");
+
+const member = await interaction.guild.members.fetch(user.id);
+
+await sendWelcome(member, interaction.channel);
+
+return interaction.reply({
+content:"Test welcome terkirim.",
+ephemeral:true
+});
+
+}
+
+/* ================= PMLEVEL ================= */
+
+if (interaction.commandName === "pmlevel") {
+
+await interaction.deferReply();
+
+const user = interaction.options.getUser("user") || interaction.user;
+const kategori = interaction.options.getString("kategori");
+
+if (!levels[user.id]) {
+
+levels[user.id] = {
+chat:{total:0},
+voice:{total:0}
+};
+
+saveLevels();
+
+}
+
+const data = levels[user.id];
+
+const member = await interaction.guild.members.fetch(user.id);
+
+/* ===== TOTAL EXP ===== */
+
+const totalExp = (data.chat?.total || 0) + (data.voice?.total || 0);
+
+/* ===== GLOBAL RANK ===== */
+
+const sorted = Object.entries(levels)
+.map(([id,d])=>({
+id,
+total:(d.chat?.total||0)+(d.voice?.total||0)
+}))
+.sort((a,b)=>b.total-a.total);
+
+const rank = sorted.findIndex(u=>u.id===user.id)+1;
+
+/* ===== GENERATE CARD ===== */
+
+const buffer = await generateLevelCard(member,totalExp,rank);
+
+const attachment = new MessageAttachment(buffer,"pm-level.png");
+
+return interaction.editReply({
+files:[attachment]
+});
+
+}
+
+/* ================= CHECK STRIKE ================= */
+
+if (interaction.commandName === "checkstrike") {
+
+const user = interaction.options.getUser("user");
+
+const count = strikes[user.id] || 0;
+
+return interaction.reply({
+content:`${user.tag} memiliki ${count} strike.`,
+ephemeral:true
+});
+
+}
+
+
+/* ================= CLEAR STRIKE ================= */
+
+if (interaction.commandName === "clearstrikes") {
+
+const user = interaction.options.getUser("user");
+
+strikes[user.id] = 0;
+
+return interaction.reply({
+content:`Strike ${user.tag} berhasil direset.`,
+ephemeral:true
+});
+
+}
+
+/* ================= TIMEOUT ================= */
+
+if (interaction.commandName === "timeout" || interaction.commandName === "mute") {
+
+if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+
+return interaction.reply({
+content:"Kamu tidak punya izin.",
+ephemeral:true
+});
+
+}
+
+const user = interaction.options.getUser("user");
+const duration = interaction.options.getInteger("duration");
+
+const reason = interaction.options.getString("reason") || "Tidak ada alasan";
+
+const member = interaction.guild.members.cache.get(user.id);
+
+if (!member.moderatable) {
+
+return interaction.reply({
+content:"Tidak bisa memoderasi user ini.",
+ephemeral:true
+});
+
+}
+
+await member.timeout(duration * 60000, reason);
+
+interaction.reply(`${user.tag} di-timeout ${duration} menit.`);
+
+if (logChannel) {
+
+logChannel.send(`🔇 ${user.tag} di-timeout ${duration} menit\nAlasan: ${reason}`);
+
+}
+
+}
+
+/* ================= KICK ================= */
+
+if (interaction.commandName === "kick") {
+
+const user = interaction.options.getUser("user");
+const reason = interaction.options.getString("reason") || "Tidak ada alasan";
+
+const member = interaction.guild.members.cache.get(user.id);
+
+if (!member.kickable) {
+
+return interaction.reply({
+content:"Tidak bisa kick user ini.",
+ephemeral:true
+});
+
+}
+
+await member.kick(reason);
+
+interaction.reply(`${user.tag} berhasil di-kick.`);
+
+if (logChannel) {
+
+logChannel.send(`👢 ${user.tag} di-kick\nAlasan: ${reason}`);
+
+}
+
+}
+
+/* ================= BAN ================= */
+
+if (interaction.commandName === "ban") {
+
+const user = interaction.options.getUser("user");
+const reason = interaction.options.getString("reason") || "Tidak ada alasan";
+
+const member = interaction.guild.members.cache.get(user.id);
+
+if (!member.bannable) {
+
+return interaction.reply({
+content:"Tidak bisa ban user ini.",
+ephemeral:true
+});
+
+}
+
+await member.ban({reason});
+
+interaction.reply(`${user.tag} berhasil di-ban.`);
+
+if (logChannel) {
+
+logChannel.send(`🔨 ${user.tag} di-ban\nAlasan: ${reason}`);
+
+}
+
+}
+
+/* ================= PMLEADERBOARD ================= */
+
+if (interaction.commandName === "pmleaderboard") {
+
+  await interaction.deferReply();
+
+  const kategori = interaction.options.getString("kategori");
+  const waktu = interaction.options.getString("waktu") || "total";
+  let jumlah = interaction.options.getInteger("jumlah");
+
+  if (!kategori) {
+    jumlah = jumlah || 5;      // default jika dua kategori
+  } else {
+    jumlah = jumlah || 10;     // default jika satu kategori
+  }
+
+  const data = Object.entries(levels);
+
+  const getSorted = (type) => {
+    return data
+      .sort((a, b) => (b[1][type]?.[waktu] || 0) - (a[1][type]?.[waktu] || 0))
+      .slice(0, jumlah);
+  };
+
+  const embed = new MessageEmbed()
+    .setColor("#F1C40F")
+    .setTitle("🏆 Pawn Me Leaderboard")
+    .setFooter({
+      text: "Pawn Me Level System",
+      iconURL: interaction.guild.iconURL({ dynamic: true })
+    })
+    .setTimestamp();
+
+  /* ===== MODE DUAL (CHAT + VOICE) ===== */
+
+  if (!kategori) {
+
+    let chatTop = getSorted("chat");
+    let voiceTop = getSorted("voice");
+
+    await interaction.guild.members.fetch({ force: true });
+
+    const guildMembers = interaction.guild.members.cache
+      .filter(m => !m.user.bot)
+      .map(m => m.id);
+
+    function getRandomMembers(amount, exclude = []) {
+      const pool = guildMembers.filter(id => !exclude.includes(id));
+      const shuffled = pool.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, amount);
+    }
+
+    if (chatTop.length < jumlah) {
+
+      const needed = jumlah - chatTop.length;
+
+      const existingIds = chatTop.map(u => u[0]);
+
+      const randomIds = getRandomMembers(needed, existingIds);
+
+      const filler = randomIds.map(id => [
+        id,
+        { chat: { [waktu]: 0 } }
+      ]);
+
+      chatTop = [...chatTop, ...filler];
+
+    }
+
+    if (voiceTop.length < jumlah) {
+
+      const needed = jumlah - voiceTop.length;
+
+      const existingIds = voiceTop.map(u => u[0]);
+
+      const randomIds = getRandomMembers(needed, existingIds);
+
+      const filler = randomIds.map(id => [
+        id,
+        { voice: { [waktu]: 0 } }
+      ]);
+
+      voiceTop = [...voiceTop, ...filler];
+
+    }
+
+    const chatText = chatTop
+      .map((u, i) => `${i + 1}. <@${u[0]}> — ${u[1].chat?.[waktu] || 0} XP`)
+      .join("\n");
+
+    const voiceText = voiceTop
+      .map((u, i) => `${i + 1}. <@${u[0]}> — ${u[1].voice?.[waktu] || 0} XP`)
+      .join("\n");
+
+    embed.addField("💬 Top Chat", chatText);
+    embed.addField("🎧 Top Voice", voiceText);
+
+  }
+
+  /* ===== MODE SINGLE CATEGORY ===== */
+
+  else {
+
+    let top = getSorted(kategori);
+
+    await interaction.guild.members.fetch();
+
+    const guildMembers = interaction.guild.members.cache
+      .filter(m => !m.user.bot)
+      .map(m => m.id);
+
+    function getRandomMembers(amount, exclude = []) {
+      const pool = guildMembers.filter(id => !exclude.includes(id));
+      const shuffled = pool.sort(() => 0.5 - Math.random());
+      return shuffled.slice(0, amount);
+    }
+
+    if (top.length < jumlah) {
+
+      const needed = jumlah - top.length;
+
+      const existingIds = top.map(u => u[0]);
+
+      const randomIds = getRandomMembers(needed, existingIds);
+
+      const filler = randomIds.map(id => [
+        id,
+        {
+          chat: { [waktu]: 0 },
+          voice: { [waktu]: 0 }
+        }
+      ]);
+
+      top = [...top, ...filler];
+
+    }
+
+    const text = top
+      .map((u, i) => `${i + 1}. <@${u[0]}> — ${u[1][kategori]?.[waktu] || 0} XP`)
+      .join("\n");
+
+    embed.addField(
+      kategori === "chat" ? "💬 Top Chat" : "🎧 Top Voice",
+      text
+    );
+
+  }
+
+  return interaction.editReply({ embeds: [embed] });
+
+}
+
+/* ================= PMCONFIG PANEL ================= */
+
+if (interaction.commandName === "pmconfig") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({
+      content: "Kamu tidak punya izin.",
+      ephemeral: true
+    });
+  }
+
+  const embed = new MessageEmbed()
+    .setColor("#1ABC9C")
+    .setTitle("🎛 Pawn Me Leveling Control Panel")
+    .setDescription("Gunakan tombol di bawah untuk mengatur sistem leveling Pawn Me.")
+    .addField("Chat EXP", `${config.chat_exp}`, true)
+    .addField("Voice EXP / Minute", `${config.voice_exp_per_minute}`, true)
+    .addField("Chat Cooldown", `${config.chat_cooldown} sec`, true)
+    .addField("Booster Multiplier", `${config.booster_multiplier}x`, true)
+    .addField("Double EXP", config.double_exp ? "Aktif" : "Nonaktif", true)
+    .addField("Role Reward", config.role_rewards_enabled ? "Aktif" : "Nonaktif", true)
+    .addField("Rank Mode", config.rank_mode_enabled ? "Aktif" : "Nonaktif", true)
+    .setFooter({
+      text: "Pawn Me Premium Level System"
+    })
+    .setTimestamp();
+
+
+/* ===== ROW 1 ===== */
+
+const row1 = new MessageActionRow().addComponents(
+
+  new MessageButton()
+    .setCustomId("config_exp")
+    .setLabel("EXP Settings")
+    .setStyle("PRIMARY"),
+
+  new MessageButton()
+    .setCustomId("config_double")
+    .setLabel("Double EXP")
+    .setStyle("SUCCESS"),
+
+  new MessageButton()
+    .setCustomId("config_booster")
+    .setLabel("Booster Multiplier")
+    .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_role")
+    .setLabel("Role Reward")
+    .setStyle("DANGER")
+
+);
+
+
+/* ===== ROW 2 ===== */
+
+const row2 = new MessageActionRow().addComponents(
+
+  new MessageButton()
+    .setCustomId("config_scheduler")
+    .setLabel("Monthly Scheduler")
+    .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_rankmode")
+    .setLabel("Rank Mode")
+    .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_levelup")
+    .setLabel("Level Up Toggle")
+    .setStyle("SECONDARY"),
+
+  new MessageButton()
+    .setCustomId("config_manage_rewards")
+    .setLabel("Manage Rewards")
+    .setStyle("PRIMARY")
+
+);
+
+  return interaction.reply({
+    embeds: [embed],
+    components: [row1, row2],
+    ephemeral: true
+  });
+ 
+}
+
+}
+
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
 
 setInterval(async () => {
