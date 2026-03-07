@@ -808,8 +808,6 @@ saveLevels();
 
 const data = levels[user.id];
 
-/* ===== DUAL CARD ===== */
-
 if (!kategori) {
 
 const buffer = await generateDualLevelCard(member,data);
