@@ -655,7 +655,7 @@ async function generateDualLevelCard(member,data){
 const canvas = createCanvas(1000,400);
 const ctx = canvas.getContext("2d");
 
-const bg = await loadImage("./assets/level-bg.png");
+const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
 ctx.drawImage(bg,0,0,1000,400);
 
 /* ===== AVATAR ===== */
@@ -707,7 +707,7 @@ const ctx = canvas.getContext("2d");
 
 /* ===== BACKGROUND LOCAL FILE ===== */
 
-const background = await loadImage("./assets/level-bg.png");
+const background = await loadImage("https://i.imgur.com/8mpdC50.png");
 
 ctx.drawImage(background,0,0,width,height);
 
