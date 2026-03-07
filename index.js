@@ -992,16 +992,15 @@ if (interaction.customId === "config_manage_rewards") {
 
   }
 
-  let text = "**Role Rewards yang sudah diatur:**\n\n";
-
-  for (const [level, roleId] of Object.entries(config.role_rewards)) {
-    text += `**Level ${level}** → <@&${roleId}>\n`;
-  }
+  const rewards = Object.entries(config.role_rewards)
+    .sort((a,b)=>Number(a[0]) - Number(b[0]))
+    .map(([level, roleId]) => `Level ${level} → <@&${roleId}>`)
+    .join("\n");
 
   const embed = new MessageEmbed()
     .setColor("#3498DB")
     .setTitle("📋 Current Role Rewards")
-    .setDescription(text)
+    .setDescription("Role rewards yang sudah diatur:\n\n" + rewards)
     .setTimestamp();
 
   return interaction.reply({
