@@ -1147,8 +1147,6 @@ ephemeral:true
 
 if (!interaction.isCommand()) return;
 
-const logChannel = client.channels.cache.get(LOG_CHANNEL_ID);
-
 /* ================= PING ================= */
 
 if (interaction.commandName === "ping") {
