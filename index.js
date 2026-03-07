@@ -632,7 +632,7 @@ iconURL:member.guild.iconURL({dynamic:true})
 .setTimestamp();
 
 await channel.send({
-content:"**WELCOME TO PAWN ME 🐾**",
+content:"**WELCOME TO PAWN ME FAMILY**",
 embeds:[embed]
 });
 
@@ -793,6 +793,8 @@ await interaction.deferReply();
 const user = interaction.options.getUser("user") || interaction.user;
 const kategori = interaction.options.getString("kategori");
 
+const member = await interaction.guild.members.fetch(user.id);
+
 if (!levels[user.id]) {
 
 levels[user.id] = {
@@ -806,7 +808,18 @@ saveLevels();
 
 const data = levels[user.id];
 
-const member = await interaction.guild.members.fetch(user.id);
+/* ===== DUAL CARD ===== */
+
+if (!kategori) {
+
+const buffer = await generateDualLevelCard(member,data);
+
+return interaction.editReply({
+files:[new MessageAttachment(buffer,"pm-level.png")]
+});
+
+}
+
 
 /* ===== TOTAL EXP ===== */
 
@@ -1007,7 +1020,7 @@ if (interaction.commandName === "pmleaderboard") {
     let chatTop = getSorted("chat");
     let voiceTop = getSorted("voice");
 
-    await interaction.guild.members.fetch({ force: true });
+    await interaction.guild.members.fetch();
 
     const guildMembers = interaction.guild.members.cache
       .filter(m => !m.user.bot)
