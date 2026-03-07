@@ -1595,6 +1595,7 @@ if (interaction.commandName === "pmleaderboard") {
 
 }
 
+
 /* ================= PMCONFIG PANEL ================= */
 
 if (interaction.commandName === "pmconfig") {
@@ -1683,6 +1684,73 @@ const row2 = new MessageActionRow().addComponents(
   });
  
 }
+
+/* ================= PMXPADD ================= */
+
+if (interaction.commandName === "pmxpadd") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({
+      content: "Kamu tidak punya izin.",
+      ephemeral: true
+    });
+  }
+
+  const user = interaction.options.getUser("user");
+  const xpToAdd = interaction.options.getInteger("xp");
+
+  if (xpToAdd <= 0) {
+    return interaction.reply({
+      content: "XP harus lebih dari 0.",
+      ephemeral: true
+    });
+  }
+
+  if (!levels[user.id]) {
+    levels[user.id] = {
+      chat: { total: 0, month: 0, week: 0, day: 0 },
+      voice: { total: 0, month: 0, week: 0, day: 0 }
+    };
+  }
+
+  const oldTotal = levels[user.id].chat.total + levels[user.id].voice.total;
+
+  levels[user.id].chat.total += xpToAdd;
+  levels[user.id].chat.month += xpToAdd;
+  levels[user.id].chat.week += xpToAdd;
+  levels[user.id].chat.day += xpToAdd;
+
+  const newTotal = levels[user.id].chat.total + levels[user.id].voice.total;
+
+  saveLevels();
+
+  const embed = new MessageEmbed()
+    .setColor("#2ECC71")
+    .setTitle("✅ XP Added")
+    .setDescription(`${user} mendapat **+${xpToAdd} XP**`)
+    .addField("Old Total", `${oldTotal}`, true)
+    .addField("New Total", `${newTotal}`, true)
+    .setTimestamp();
+
+  interaction.reply({
+    embeds: [embed],
+    ephemeral: true
+  });
+
+  if (logChannel) {
+    logChannel.send({
+      embeds: [new MessageEmbed()
+        .setColor("#2ECC71")
+        .setTitle("📊 XP Added")
+        .addField("User", `${user}`, true)
+        .addField("XP", `+${xpToAdd}`, true)
+        .addField("Admin", `${interaction.user}`, true)
+        .setTimestamp()]
+    });
+  }
+
+}
+
 
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
