@@ -1880,6 +1880,86 @@ if (interaction.commandName === "pmxpreset") {
 
 }
 
+/* ================= PMXPREMOVE ================= */
+
+if (interaction.commandName === "pmxpremove") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({
+      content: "Kamu tidak punya izin.",
+      ephemeral: true
+    });
+  }
+
+  const user = interaction.options.getUser("user");
+  const kategori = interaction.options.getString("kategori");
+  const xpChoice = interaction.options.getString("xp");
+  const customXp = interaction.options.getInteger("jumlah");
+
+  if (!levels[user.id]) {
+    return interaction.reply({
+      content: "Member ini tidak memiliki XP.",
+      ephemeral: true
+    });
+  }
+
+  let xpToRemove = 0;
+  const currentXp = levels[user.id][kategori].total;
+
+  if (xpChoice === "custom") {
+    if (!customXp || customXp <= 0) {
+      return interaction.reply({
+        content: "Masukkan jumlah XP yang valid.",
+        ephemeral: true
+      });
+    }
+    xpToRemove = customXp;
+  } else if (xpChoice === "all") {
+    xpToRemove = currentXp;
+  } else if (xpChoice === "half") {
+    xpToRemove = Math.floor(currentXp / 2);
+  }
+
+  if (xpToRemove > currentXp) {
+    xpToRemove = currentXp;
+  }
+
+  const newXp = Math.max(0, levels[user.id][kategori].total - xpToRemove);
+
+  levels[user.id][kategori].total = newXp;
+  levels[user.id][kategori].month = Math.max(0, levels[user.id][kategori].month - xpToRemove);
+  levels[user.id][kategori].week = Math.max(0, levels[user.id][kategori].week - xpToRemove);
+  levels[user.id][kategori].day = Math.max(0, levels[user.id][kategori].day - xpToRemove);
+
+  saveLevels();
+
+  const embed = new MessageEmbed()
+    .setColor("#E74C3C")
+    .setTitle("✅ XP Removed")
+    .setDescription(`${user} kehilangan **-${xpToRemove} XP** (${kategori})`)
+    .addField("XP Sebelumnya", `${currentXp}`, true)
+    .addField("XP Sesudahnya", `${newXp}`, true)
+    .setTimestamp();
+
+  interaction.reply({
+    embeds: [embed],
+    ephemeral: true
+  });
+
+  if (logChannel) {
+    logChannel.send({
+      embeds: [new MessageEmbed()
+        .setColor("#E74C3C")
+        .setTitle("📊 XP Removed")
+        .addField("User", `${user}`, true)
+        .addField("Kategori", kategori, true)
+        .addField("XP", `-${xpToRemove}`, true)
+        .addField("Admin", `${interaction.user}`, true)
+        .setTimestamp()]
+    });
+  }
+
+}
 
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
