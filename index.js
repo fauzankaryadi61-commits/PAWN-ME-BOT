@@ -375,11 +375,20 @@ client.once("ready", async () => {
   name: "pmxpadd",
   description: "Tambah XP ke member",
   options: [
-    { name: "user", description: "Member", type: 6, required: true },
+    { name: "member", description: "Member", type: 6, required: true },
+    {
+      name: "kategori",
+      description: "Kategori XP",
+      type: 3,
+      required: true,
+      choices: [
+        { name: "Chat", value: "chat" },
+        { name: "Voice", value: "voice" }
+      ]
+    },
     { name: "xp", description: "Jumlah XP yang ditambah", type: 4, required: true }
   ]
 },
-
 {
   name: "pmxpreset",
   description: "Reset XP member",
@@ -1696,7 +1705,8 @@ if (interaction.commandName === "pmxpadd") {
     });
   }
 
-  const user = interaction.options.getUser("user");
+  const user = interaction.options.getUser("member");
+  const kategori = interaction.options.getString("kategori");
   const xpToAdd = interaction.options.getInteger("xp");
 
   if (xpToAdd <= 0) {
@@ -1713,23 +1723,23 @@ if (interaction.commandName === "pmxpadd") {
     };
   }
 
-  const oldTotal = levels[user.id].chat.total + levels[user.id].voice.total;
+  const oldXp = levels[user.id][kategori].total;
 
-  levels[user.id].chat.total += xpToAdd;
-  levels[user.id].chat.month += xpToAdd;
-  levels[user.id].chat.week += xpToAdd;
-  levels[user.id].chat.day += xpToAdd;
+  levels[user.id][kategori].total += xpToAdd;
+  levels[user.id][kategori].month += xpToAdd;
+  levels[user.id][kategori].week += xpToAdd;
+  levels[user.id][kategori].day += xpToAdd;
 
-  const newTotal = levels[user.id].chat.total + levels[user.id].voice.total;
+  const newXp = levels[user.id][kategori].total;
 
   saveLevels();
 
   const embed = new MessageEmbed()
     .setColor("#2ECC71")
     .setTitle("✅ XP Added")
-    .setDescription(`${user} mendapat **+${xpToAdd} XP**`)
-    .addField("Old Total", `${oldTotal}`, true)
-    .addField("New Total", `${newTotal}`, true)
+    .setDescription(`${user} mendapat **+${xpToAdd} XP** (${kategori})`)
+    .addField("XP Sebelumnya", `${oldXp}`, true)
+    .addField("XP Sekarang", `${newXp}`, true)
     .setTimestamp();
 
   interaction.reply({
@@ -1743,6 +1753,7 @@ if (interaction.commandName === "pmxpadd") {
         .setColor("#2ECC71")
         .setTitle("📊 XP Added")
         .addField("User", `${user}`, true)
+        .addField("Kategori", kategori, true)
         .addField("XP", `+${xpToAdd}`, true)
         .addField("Admin", `${interaction.user}`, true)
         .setTimestamp()]
