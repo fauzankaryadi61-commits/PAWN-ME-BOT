@@ -1605,6 +1605,35 @@ if (interaction.commandName === "pmleaderboard") {
 }
 
 
+/* ================= SARANPANEL ================= */
+
+if (interaction.commandName === "saranpanel") {
+
+  const embed = new MessageEmbed()
+    .setColor("#9B59B6")
+    .setTitle("💭 Kotak Saran & Kritik")
+    .setDescription("Sampaikan saran dan kritik Anda untuk Pawn Me Server")
+    .setFooter({
+      text: "Pawn Me Suggestion Box",
+      iconURL: interaction.guild.iconURL({ dynamic: true })
+    })
+    .setTimestamp();
+
+  const row = new MessageActionRow().addComponents(
+    new MessageButton()
+      .setCustomId("suggestion_modal")
+      .setLabel("Kritik dan Saran")
+      .setStyle("PRIMARY")
+  );
+
+  return interaction.reply({
+    embeds: [embed],
+    components: [row],
+    ephemeral: false
+  });
+
+}
+
 /* ================= PMCONFIG PANEL ================= */
 
 if (interaction.commandName === "pmconfig") {
