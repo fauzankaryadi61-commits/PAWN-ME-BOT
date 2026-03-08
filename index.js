@@ -1762,6 +1762,124 @@ if (interaction.commandName === "pmxpadd") {
 
 }
 
+/* ================= PMXPRESET ================= */
+
+if (interaction.commandName === "pmxpreset") {
+
+  if (!interaction.member.permissions.has(Permissions.FLAGS.ADMINISTRATOR)) {
+    return interaction.reply({
+      content: "Kamu tidak punya izin.",
+      ephemeral: true
+    });
+  }
+
+  const mode = interaction.options.getString("mode");
+  const targetUser = interaction.options.getUser("user");
+
+  let resetCount = 0;
+
+  if (mode === "server") {
+    // Reset semua member, semua kategori
+    for (const userId in levels) {
+      levels[userId].chat.total = 0;
+      levels[userId].chat.month = 0;
+      levels[userId].chat.week = 0;
+      levels[userId].chat.day = 0;
+
+      levels[userId].voice.total = 0;
+      levels[userId].voice.month = 0;
+      levels[userId].voice.week = 0;
+      levels[userId].voice.day = 0;
+
+      resetCount++;
+    }
+
+    saveLevels();
+
+    const embed = new MessageEmbed()
+      .setColor("#E74C3C")
+      .setTitle("🔴 Server XP Reset")
+      .setDescription(`Semua XP member di server telah direset!`)
+      .addField("Total Member", `${resetCount}`, true)
+      .setTimestamp();
+
+    return interaction.reply({
+      embeds: [embed],
+      ephemeral: true
+    });
+
+  } else if (targetUser) {
+    // Reset satu member, kategori tertentu
+    if (!levels[targetUser.id]) {
+      return interaction.reply({
+        content: "Member ini tidak memiliki XP.",
+        ephemeral: true
+      });
+    }
+
+    const oldXp = levels[targetUser.id][mode].total;
+
+    levels[targetUser.id][mode].total = 0;
+    levels[targetUser.id][mode].month = 0;
+    levels[targetUser.id][mode].week = 0;
+    levels[targetUser.id][mode].day = 0;
+
+    saveLevels();
+
+    const embed = new MessageEmbed()
+      .setColor("#E74C3C")
+      .setTitle("🔴 Member XP Reset")
+      .setDescription(`${targetUser} XP ${mode} telah direset!`)
+      .addField("Kategori", mode.toUpperCase(), true)
+      .addField("XP Sebelumnya", `${oldXp}`, true)
+      .setTimestamp();
+
+    interaction.reply({
+      embeds: [embed],
+      ephemeral: true
+    });
+
+    if (logChannel) {
+      logChannel.send({
+        embeds: [new MessageEmbed()
+          .setColor("#E74C3C")
+          .setTitle("🔴 Member XP Reset")
+          .addField("User", `${targetUser}`, true)
+          .addField("Kategori", mode, true)
+          .addField("XP Lama", `${oldXp}`, true)
+          .addField("Admin", `${interaction.user}`, true)
+          .setTimestamp()]
+      });
+    }
+
+  } else {
+    // Reset semua member, kategori tertentu
+    for (const userId in levels) {
+      levels[userId][mode].total = 0;
+      levels[userId][mode].month = 0;
+      levels[userId][mode].week = 0;
+      levels[userId][mode].day = 0;
+      resetCount++;
+    }
+
+    saveLevels();
+
+    const embed = new MessageEmbed()
+      .setColor("#E74C3C")
+      .setTitle("🔴 Category XP Reset")
+      .setDescription(`Semua XP **${mode.toUpperCase()}** di semua member telah direset!`)
+      .addField("Total Member", `${resetCount}`, true)
+      .setTimestamp();
+
+    return interaction.reply({
+      embeds: [embed],
+      ephemeral: true
+    });
+
+  }
+
+}
+
 
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
