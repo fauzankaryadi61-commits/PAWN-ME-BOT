@@ -1077,6 +1077,29 @@ if (interaction.customId === "config_manage_rewards") {
 }
 
 
+/* ===== SUGGESTION MODAL ===== */
+
+if (interaction.customId === "suggestion_modal") {
+
+  const modal = new Modal()
+    .setCustomId("modal_suggestion")
+    .setTitle("Kirim Saran & Kritik");
+
+  const suggestionInput = new TextInputComponent()
+    .setCustomId("suggestion_text")
+    .setLabel("Saran dan Kritik Anda")
+    .setStyle("PARAGRAPH")
+    .setRequired(true);
+
+  modal.addComponents(
+    new MessageActionRow().addComponents(suggestionInput)
+  );
+
+  return interaction.showModal(modal);
+
+}
+
+
 /* ===== MONTHLY SCHEDULER ===== */
 
 if (interaction.customId === "config_scheduler") {
