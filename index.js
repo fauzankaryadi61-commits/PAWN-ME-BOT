@@ -1178,6 +1178,32 @@ ephemeral:true
 
 }
 
+/* ===== SUGGESTION MODAL SUBMIT ===== */
+
+if (interaction.customId === "modal_suggestion") {
+
+  const suggestion = interaction.fields.getTextInputValue("suggestion_text");
+
+  const saranChannel = client.channels.cache.get(SARAN_CHANNEL_ID);
+
+  if (saranChannel) {
+    const embed = new MessageEmbed()
+      .setColor("#FFD700")
+      .setTitle("📝 Saran Baru")
+      .setDescription(suggestion)
+      .addField("Dari", `${interaction.user}`, true)
+      .addField("User ID", interaction.user.id, true)
+      .setTimestamp();
+
+    await saranChannel.send({ embeds: [embed] });
+  }
+
+  return interaction.reply({
+    content: "✅ Terima kasih! Saran Anda telah dikirim.",
+    ephemeral: true
+  });
+
+}
 
 /* ===== BOOSTER MULTIPLIER MODAL ===== */
 
