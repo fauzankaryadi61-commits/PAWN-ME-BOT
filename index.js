@@ -1539,11 +1539,11 @@ if (interaction.commandName === "pmleaderboard") {
     }
 
     const chatText = chatTop
-      .map((u, i) => `${i + 1}. <@${u[0]}> — ${u[1].chat?.[waktu] || 0} XP`)
+      .map((u, i) => `${i + 1}. <@${u[0]}>  >  ${u[1].chat?.[waktu] || 0} XP`)
       .join("\n");
 
     const voiceText = voiceTop
-      .map((u, i) => `${i + 1}. <@${u[0]}> — ${u[1].voice?.[waktu] || 0} XP`)
+      .map((u, i) => `${i + 1}. <@${u[0]}>  >  ${u[1].voice?.[waktu] || 0} XP`)
       .join("\n");
 
     embed.addField("💬 Top Chat", chatText);
