@@ -1079,26 +1079,25 @@ if (interaction.customId === "config_manage_rewards") {
 
 /* ===== SUGGESTION MODAL ===== */
 
-if (interaction.customId === "suggestion_modal") {
+if(interaction.customId === "kirim_saran"){
 
-  const modal = new Modal()
-    .setCustomId("modal_suggestion")
-    .setTitle("Kirim Saran & Kritik");
+const modal = new ModalBuilder()
+.setCustomId("modal_saran")
+.setTitle("Kirim Kritik & Saran");
 
-  const suggestionInput = new TextInputComponent()
-    .setCustomId("suggestion_text")
-    .setLabel("Saran dan Kritik Anda")
-    .setStyle("PARAGRAPH")
-    .setRequired(true);
+const saranInput = new TextInputBuilder()
+.setCustomId("isi_saran")
+.setLabel("Tulis saran kamu")
+.setStyle(TextInputStyle.Paragraph)
+.setRequired(true);
 
-  modal.addComponents(
-    new MessageActionRow().addComponents(suggestionInput)
-  );
+const row = new ActionRowBuilder().addComponents(saranInput);
 
-  return interaction.showModal(modal);
+modal.addComponents(row);
+
+await interaction.showModal(modal);
 
 }
-
 
 /* ===== MONTHLY SCHEDULER ===== */
 
@@ -1180,28 +1179,34 @@ ephemeral:true
 
 /* ===== SUGGESTION MODAL SUBMIT ===== */
 
-if (interaction.customId === "modal_suggestion") {
+if(interaction.customId === "modal_saran"){
 
-  const suggestion = interaction.fields.getTextInputValue("suggestion_text");
+const saran = interaction.fields.getTextInputValue("isi_saran");
 
-  const saranChannel = client.channels.cache.get(SARAN_CHANNEL_ID);
+const embed = new EmbedBuilder()
+.setColor("#5865F2")
+.setTitle("📬 Kritik & Saran")
+.addFields(
+{
+name: "👤 Pengirim:",
+value: interaction.user.username,
+inline: false
+},
+{
+name: "✉️ Isi Saran:",
+value: saran,
+inline: false
+}
+)
+.setFooter({text: "Terimakasih sudah memberikan saran!"})
+.setTimestamp();
 
-  if (saranChannel) {
-    const embed = new MessageEmbed()
-      .setColor("#FFD700")
-      .setTitle("📝 Saran Baru")
-      .setDescription(suggestion)
-      .addField("Dari", `${interaction.user}`, true)
-      .addField("User ID", interaction.user.id, true)
-      .setTimestamp();
+await interaction.channel.send({embeds:[embed]});
 
-    await saranChannel.send({ embeds: [embed] });
-  }
-
-  return interaction.reply({
-    content: "✅ Terima kasih! Saran Anda telah dikirim.",
-    ephemeral: true
-  });
+await interaction.reply({
+content:"Saran kamu berhasil dikirim.",
+ephemeral:true
+});
 
 }
 
