@@ -1103,6 +1103,7 @@ if (interaction.customId === "open_saran") {
     return interaction.showModal(modal);
   }
 
+
 /* ===== MONTHLY SCHEDULER ===== */
 
 if (interaction.customId === "config_scheduler") {
@@ -1183,36 +1184,58 @@ ephemeral:true
 
 /* ===== SUGGESTION MODAL SUBMIT ===== */
 
-if(interaction.customId === "modal_saran"){
+if (interaction.customId === "modal_saran") {
 
-const saran = interaction.fields.getTextInputValue("isi_saran");
+    await interaction.deferReply({ ephemeral: true });
 
-const embed = new EmbedBuilder()
-.setColor("#5865F2")
-.setTitle("📬 Kritik & Saran")
-.addFields(
-{
-name: "👤 Pengirim:",
-value: interaction.user.username,
-inline: false
-},
-{
-name: "✉️ Isi Saran:",
-value: saran,
-inline: false
-}
-)
-.setFooter({text: "Terimakasih sudah memberikan saran!"})
-.setTimestamp();
+    const nama = interaction.fields.getTextInputValue("nama") || "Anonim";
+    const isi = interaction.fields.getTextInputValue("isi");
 
-await interaction.channel.send({embeds:[embed]});
+    const now = new Date();
+    const tanggal = now.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" });
+    const jam = now.toLocaleTimeString("en-US", { 
+      timeZone: "Asia/Jakarta", 
+      hour: "2-digit", 
+      minute: "2-digit", 
+      hour12: true 
+    });
+    
+    const guildIcon = interaction.guild.iconURL({ dynamic: true });
 
-await interaction.reply({
-content:"Saran kamu berhasil dikirim.",
-ephemeral:true
+    const embed = new MessageEmbed()
+      .setTitle("📬 Kritik & Saran")
+      .addField("👤 Pengirim:", nama)
+      .addField("✉️ Isi Saran:", isi)
+      .setColor("#57F287")
+      .setFooter({
+        text: `Terimakasih sudah memberikan saran! | ${tanggal} ${jam} WIB`,
+        iconURL: guildIcon
+      });
+
+     const buttonRow = new MessageActionRow().addComponents(
+       new MessageButton()
+         .setCustomId("open_saran")
+         .setLabel("📬 Kirim Saran")
+         .setStyle("PRIMARY")
+     );
+
+     const channel = await client.channels.fetch(SARAN_CHANNEL_ID);
+
+     const msg = await channel.send({
+       embeds: [embed],
+       components: [buttonRow]
 });
 
-}
+    await msg.react("✅");
+    await msg.react("❌");
+
+    await msg.startThread({
+      name: "Berikan Tanggapan",
+      autoArchiveDuration: 1440
+    });
+
+    await interaction.editReply("Terima kasih! Saran kamu sudah terkirim.");
+  }
 
 /* ===== BOOSTER MULTIPLIER MODAL ===== */
 
