@@ -715,152 +715,145 @@ sendWelcome(member, channel);
 
 /* ================= LEVEL CARD SYSTEM ================= */
 
-async function generateDualLevelCard(member,data){
-
-const canvas = createCanvas(1000,400);
-const ctx = canvas.getContext("2d");
-
-const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
-ctx.drawImage(bg,0,0,1000,400);
-
-/* ===== AVATAR ===== */
-
-const avatar = await loadImage(
-member.user.displayAvatarURL({extension:"png",size:256})
-);
-
-ctx.save();
-ctx.beginPath();
-ctx.arc(120,200,80,0,Math.PI*2,true);
-ctx.closePath();
-ctx.clip();
-ctx.drawImage(avatar,40,120,160,160);
-ctx.restore();
-
-/* ===== USERNAME ===== */
-
-ctx.fillStyle="#ffffff";
-ctx.font="bold 40px Sans";
-ctx.fillText(member.user.username,240,140);
-
-/* ===== CHAT EXP ===== */
-
-const chatExp=data.chat?.total||0;
-
-ctx.font="28px Sans";
-ctx.fillText(`Chat EXP: ${chatExp}`,240,200);
-
-/* ===== VOICE EXP ===== */
-
-const voiceExp=data.voice?.total||0;
-
-ctx.fillText(`Voice EXP: ${voiceExp}`,240,250);
-
-return canvas.toBuffer();
-
-}
-
-/* ================= LEVEL CARD SYSTEM ================= */
-
-async function generateLevelCard(member, totalExp, rank){
+async function generateDualLevelCard(member, data){
 
 const width = 1000;
-const height = 350;
+const height = 420;
 
 const canvas = createCanvas(width,height);
 const ctx = canvas.getContext("2d");
 
-/* ===== BACKGROUND LOCAL FILE ===== */
+const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
+ctx.drawImage(bg,0,0,width,height);
 
-const background = await loadImage("https://i.imgur.com/8mpdC50.png");
+const chatExp = data.chat?.total || 0;
+const voiceExp = data.voice?.total || 0;
 
-ctx.drawImage(background,0,0,width,height);
+/* LEVEL DATA */
 
-/* ===== LEVEL CALCULATION ===== */
+const chatData = getLevelData(chatExp);
+const voiceData = getLevelData(voiceExp);
 
-const level = Math.floor(0.1 * Math.sqrt(totalExp));
+/* AVATAR */
 
-const nextLevelExp = Math.pow((level + 1) / 0.1, 2);
-const currentLevelExp = Math.pow(level / 0.1, 2);
-
-const currentXP = Math.floor(totalExp - currentLevelExp);
-const requiredXP = Math.floor(nextLevelExp - currentLevelExp);
-
-const progress = currentXP / requiredXP;
-
-/* ===== AVATAR ===== */
-
-const avatar = await loadImage(
-member.user.displayAvatarURL({format:"png",size:256})
-);
+const avatar = await loadImage(member.user.displayAvatarURL({format:"png",size:256}));
 
 ctx.save();
-
 ctx.beginPath();
-ctx.arc(170,175,85,0,Math.PI*2);
-ctx.closePath();
+ctx.arc(120,210,90,0,Math.PI*2);
 ctx.clip();
-
-ctx.drawImage(avatar,85,90,170,170);
-
+ctx.drawImage(avatar,30,120,180,180);
 ctx.restore();
 
-ctx.strokeStyle="#1ABC9C";
-ctx.lineWidth=6;
-
-ctx.beginPath();
-ctx.arc(170,175,90,0,Math.PI*2);
-ctx.stroke();
-
-/* ===== TEXT ===== */
+/* USERNAME */
 
 ctx.fillStyle="#FFFFFF";
-ctx.font="32px Poppins";
+ctx.font="40px MontserratBold";
+ctx.fillText(member.user.username,260,120);
 
-ctx.fillText(member.user.username,320,120);
+/* CHAT BAR */
 
-ctx.font="24px Poppins";
-
-ctx.fillText(`RANK #${rank}`,320,80);
-ctx.fillText(`LEVEL ${level}`,780,80);
-
-/* ===== BAR ===== */
-
-const barWidth=520;
-const barHeight=28;
-
-const barX=320;
-const barY=190;
+const chatProgress = chatData.currentXP / chatData.requiredXP;
 
 ctx.fillStyle="#2C2F33";
+ctx.fillRect(260,170,600,28);
 
-ctx.fillRect(barX,barY,barWidth,barHeight);
+const grad1 = ctx.createLinearGradient(260,0,860,0);
+grad1.addColorStop(0,"#00FFC6");
+grad1.addColorStop(1,"#00A8FF");
 
-const gradient=ctx.createLinearGradient(barX,0,barX+barWidth,0);
+ctx.fillStyle = grad1;
+ctx.fillRect(260,170,600 * chatProgress,28);
 
-gradient.addColorStop(0,"#1ABC9C");
-gradient.addColorStop(1,"#00E5FF");
+ctx.font="24px Montserrat";
+ctx.fillStyle="#FFFFFF";
+ctx.fillText(`CHAT • Rank #${getRank(member.id,"chat")}`,260,160);
 
-ctx.fillStyle=gradient;
+ctx.fillText(`${chatData.currentXP} / ${chatData.requiredXP} XP`,870,160);
 
-ctx.fillRect(barX,barY,barWidth*progress,barHeight);
+/* VOICE BAR */
 
-/* ===== XP TEXT ===== */
+const voiceProgress = voiceData.currentXP / voiceData.requiredXP;
 
-ctx.font="20px Poppins";
+ctx.fillStyle="#2C2F33";
+ctx.fillRect(260,260,600,28);
 
-ctx.textAlign="right";
+const grad2 = ctx.createLinearGradient(260,0,860,0);
+grad2.addColorStop(0,"#C471ED");
+grad2.addColorStop(1,"#F64F59");
 
-ctx.fillText(
-`${currentXP} / ${requiredXP} XP`,
-barX + barWidth,
-160
-);
+ctx.fillStyle = grad2;
+ctx.fillRect(260,260,600 * voiceProgress,28);
 
-ctx.textAlign="left";
+ctx.fillText(`VOICE • Rank #${getRank(member.id,"voice")}`,260,250);
+
+ctx.fillText(`${voiceData.currentXP} / ${voiceData.requiredXP} XP`,870,250);
 
 return canvas.toBuffer();
+}
 
+/* ================= LEVEL CARD SYSTEM ================= */
+
+async function generateSingleLevelCard(member, exp, rank, label){
+
+const width = 1000;
+const height = 360;
+
+const canvas = createCanvas(width,height);
+const ctx = canvas.getContext("2d");
+
+const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
+ctx.drawImage(bg,0,0,width,height);
+
+/* LEVEL */
+
+const levelData = getLevelData(exp);
+const progress = levelData.currentXP / levelData.requiredXP;
+
+/* AVATAR */
+
+const avatar = await loadImage(member.user.displayAvatarURL({format:"png",size:256}));
+
+ctx.save();
+ctx.beginPath();
+ctx.arc(120,180,90,0,Math.PI*2);
+ctx.clip();
+ctx.drawImage(avatar,30,90,180,180);
+ctx.restore();
+
+/* USERNAME */
+
+ctx.fillStyle="#FFFFFF";
+ctx.font="40px MontserratBold";
+ctx.fillText(member.user.username,260,120);
+
+/* RANK */
+
+ctx.font="26px Montserrat";
+ctx.fillText(`Rank #${rank}`,260,170);
+
+/* BAR */
+
+ctx.fillStyle="#2C2F33";
+ctx.fillRect(260,210,600,30);
+
+const gradient = ctx.createLinearGradient(260,0,860,0);
+gradient.addColorStop(0,"#00FFC6");
+gradient.addColorStop(1,"#00A8FF");
+
+ctx.fillStyle = gradient;
+ctx.fillRect(260,210,600 * progress,30);
+
+/* XP */
+
+ctx.font="22px Montserrat";
+ctx.fillText(`${levelData.currentXP} / ${levelData.requiredXP} XP`,870,200);
+
+ctx.fillText(`Level ${levelData.level}`,870,120);
+
+ctx.fillText(label,260,200);
+
+return canvas.toBuffer();
 }
 
 /* ================= INTERACTION SYSTEM ================= */
@@ -1361,45 +1354,58 @@ await interaction.deferReply();
 const user = interaction.options.getUser("user") || interaction.user;
 const kategori = interaction.options.getString("kategori");
 
+const member = await interaction.guild.members.fetch(user.id);
+
 if (!levels[user.id]) {
-
-levels[user.id] = {
-chat:{total:0},
-voice:{total:0}
-};
-
+levels[user.id] = { chat:{total:0}, voice:{total:0} };
 saveLevels();
-
 }
 
 const data = levels[user.id];
 
-const member = await interaction.guild.members.fetch(user.id);
+/* ===== DUAL CARD ===== */
 
-/* ===== TOTAL EXP ===== */
+if(!kategori){
 
-const totalExp = (data.chat?.total || 0) + (data.voice?.total || 0);
-
-/* ===== GLOBAL RANK ===== */
-
-const sorted = Object.entries(levels)
-.map(([id,d])=>({
-id,
-total:(d.chat?.total||0)+(d.voice?.total||0)
-}))
-.sort((a,b)=>b.total-a.total);
-
-const rank = sorted.findIndex(u=>u.id===user.id)+1;
-
-/* ===== GENERATE CARD ===== */
-
-const buffer = await generateLevelCard(member,totalExp,rank);
+const buffer = await generateDualLevelCard(member,data);
 
 const attachment = new MessageAttachment(buffer,"pm-level.png");
 
-return interaction.editReply({
-files:[attachment]
-});
+return interaction.editReply({files:[attachment]});
+
+}
+
+/* ===== CHAT CARD ===== */
+
+if(kategori === "chat"){
+
+const exp = data.chat?.total || 0;
+
+const rank = getRank(user.id,"chat");
+
+const buffer = await generateSingleLevelCard(member,exp,rank,"CHAT");
+
+const attachment = new MessageAttachment(buffer,"pm-chat.png");
+
+return interaction.editReply({files:[attachment]});
+
+}
+
+/* ===== VOICE CARD ===== */
+
+if(kategori === "voice"){
+
+const exp = data.voice?.total || 0;
+
+const rank = getRank(user.id,"voice");
+
+const buffer = await generateSingleLevelCard(member,exp,rank,"VOICE");
+
+const attachment = new MessageAttachment(buffer,"pm-voice.png");
+
+return interaction.editReply({files:[attachment]});
+
+}
 
 }
 
