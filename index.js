@@ -236,7 +236,6 @@ client.once("ready", async () => {
     { name: "pawn", description: "Informasi Pawn Me" },
 
     { name: "saranpanel", description: "Tampilkan panel kotak saran" },
-
     {
       name: "welcome",
       description: "Welcome member ke server",
@@ -1079,7 +1078,7 @@ if (interaction.customId === "config_manage_rewards") {
 
 /* ===== SUGGESTION MODAL ===== */
 
-if (interaction.customId === "open_saran") {
+ if (interaction.customId === "open_saran") {
     const modal = new Modal()
       .setCustomId("modal_saran")
       .setTitle("Kritik & Saran");
@@ -1101,7 +1100,8 @@ if (interaction.customId === "open_saran") {
     );
 
     return interaction.showModal(modal);
-  }
+
+}
 
 
 /* ===== MONTHLY SCHEDULER ===== */
@@ -1235,7 +1235,9 @@ if (interaction.customId === "modal_saran") {
     });
 
     await interaction.editReply("Terima kasih! Saran kamu sudah terkirim.");
-  }
+
+}
+
 
 /* ===== BOOSTER MULTIPLIER MODAL ===== */
 
@@ -1688,7 +1690,7 @@ if (interaction.commandName === "pmleaderboard") {
 
 /* ================= SARANPANEL ================= */
 
-if (interaction.commandName === "saranpanel") {
+    if (interaction.commandName === "saranpanel") {
       const row = new MessageActionRow().addComponents(
         new MessageButton()
           .setCustomId("open_saran")
