@@ -421,7 +421,7 @@ client.once("ready", async () => {
         { name: "Chat", value: "chat" },
         { name: "Voice", value: "voice" }
       ]
-    }
+    },
     {
       name: "xp",
       description: "Jumlah XP atau pilihan",
