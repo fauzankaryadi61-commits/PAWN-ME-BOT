@@ -421,6 +421,17 @@ client.once("ready", async () => {
         { name: "Chat", value: "chat" },
         { name: "Voice", value: "voice" }
       ]
+    }
+    {
+      name: "xp",
+      description: "Jumlah XP atau pilihan",
+      type: 3,
+      required: true,
+      choices: [
+        { name: "Angka (input manual)", value: "custom" },
+        { name: "Semua (all)", value: "all" },
+        { name: "Setengah (half)", value: "half" }
+      ]
     },
     {
   name: "zuan",
@@ -475,17 +486,6 @@ client.once("ready", async () => {
     }
   ]
 },
-    {
-      name: "xp",
-      description: "Jumlah XP atau pilihan",
-      type: 3,
-      required: true,
-      choices: [
-        { name: "Angka (input manual)", value: "custom" },
-        { name: "Semua (all)", value: "all" },
-        { name: "Setengah (half)", value: "half" }
-      ]
-    },
     { name: "jumlah", description: "Masukkan jumlah jika pilih 'Angka'", type: 4, required: false }
   ]
 } 
