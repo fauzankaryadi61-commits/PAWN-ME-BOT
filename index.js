@@ -433,7 +433,10 @@ client.once("ready", async () => {
         { name: "Setengah (half)", value: "half" }
       ]
     },
-    {
+    { name: "jumlah", description: "Masukkan jumlah jika pilih 'Angka'", type: 4, required: false }
+  ]
+},
+{
   name: "zuan",
   description: "Auto response system",
   options: [
@@ -485,10 +488,7 @@ client.once("ready", async () => {
       type: 1
     }
   ]
-},
-    { name: "jumlah", description: "Masukkan jumlah jika pilih 'Angka'", type: 4, required: false }
-  ]
-} 
+}, 
 
   ];
 
