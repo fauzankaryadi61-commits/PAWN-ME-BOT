@@ -423,6 +423,59 @@ client.once("ready", async () => {
       ]
     },
     {
+  name: "zuan",
+  description: "Auto response system",
+  options: [
+    {
+      name: "enable",
+      description: "Aktifkan auto response",
+      type: 1
+    },
+    {
+      name: "disable",
+      description: "Matikan auto response",
+      type: 1
+    },
+    {
+      name: "add",
+      description: "Tambah trigger",
+      type: 1,
+      options: [
+        {
+          name: "kata",
+          description: "kata trigger",
+          type: 3,
+          required: true
+        },
+        {
+          name: "respon",
+          description: "balasan bot",
+          type: 3,
+          required: true
+        }
+      ]
+    },
+    {
+      name: "remove",
+      description: "Hapus trigger",
+      type: 1,
+      options: [
+        {
+          name: "kata",
+          description: "kata trigger",
+          type: 3,
+          required: true
+        }
+      ]
+    },
+    {
+      name: "list",
+      description: "Lihat semua trigger",
+      type: 1
+    }
+  ]
+},
+    {
       name: "xp",
       description: "Jumlah XP atau pilihan",
       type: 3,
