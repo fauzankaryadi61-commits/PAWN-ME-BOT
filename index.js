@@ -2204,6 +2204,39 @@ if (interaction.commandName === "pmxpremove") {
 
 }
 
+if (interaction.commandName === "zuan") {
+
+  const fs = require("fs");
+  const path = "./data/autoresponse.json";
+
+  if (!fs.existsSync(path)) fs.writeFileSync(path, "{}");
+
+  const data = JSON.parse(fs.readFileSync(path));
+  const guildId = interaction.guild.id;
+
+  if (!data[guildId]) {
+    data[guildId] = {
+      enabled: false,
+      triggers: {}
+    };
+  }
+
+  const sub = interaction.options.getSubcommand();
+
+  if (sub === "enable") {
+    data[guildId].enabled = true;
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return interaction.reply("Auto response diaktifkan.");
+  }
+
+  if (sub === "disable") {
+    data[guildId].enabled = false;
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+    return interaction.reply("Auto response dimatikan.");
+  }
+
+}
+
 
 /* ================= MONTHLY LEADERBOARD SCHEDULER ================= */
 
