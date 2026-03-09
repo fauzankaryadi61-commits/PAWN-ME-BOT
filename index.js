@@ -1079,25 +1079,29 @@ if (interaction.customId === "config_manage_rewards") {
 
 /* ===== SUGGESTION MODAL ===== */
 
-if(interaction.customId === "kirim_saran"){
+if (interaction.customId === "open_saran") {
+    const modal = new Modal()
+      .setCustomId("modal_saran")
+      .setTitle("Kritik & Saran");
 
-const modal = new ModalBuilder()
-.setCustomId("modal_saran")
-.setTitle("Kirim Kritik & Saran");
+    const namaInput = new TextInputComponent()
+      .setCustomId("nama")
+      .setLabel("Nama (kosongkan untuk anonim)")
+      .setStyle("SHORT");
 
-const saranInput = new TextInputBuilder()
-.setCustomId("isi_saran")
-.setLabel("Tulis saran kamu")
-.setStyle(TextInputStyle.Paragraph)
-.setRequired(true);
+    const isiInput = new TextInputComponent()
+      .setCustomId("isi")
+      .setLabel("Isi saran kamu")
+      .setStyle("PARAGRAPH")
+      .setRequired(true);
 
-const row = new ActionRowBuilder().addComponents(saranInput);
+    modal.addComponents(
+      new MessageActionRow().addComponents(namaInput),
+      new MessageActionRow().addComponents(isiInput)
+    );
 
-modal.addComponents(row);
-
-await interaction.showModal(modal);
-
-}
+    return interaction.showModal(modal);
+  }
 
 /* ===== MONTHLY SCHEDULER ===== */
 
