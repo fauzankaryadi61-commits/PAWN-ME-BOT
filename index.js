@@ -450,6 +450,33 @@ client.once("ready", async () => {
 client.on("messageCreate", async (message) => {
 
   if (message.author.bot) return;
+  if (!message.guild) return;
+
+/* ================= AUTO RESPONSE ================= */
+
+const path = "./data/autoresponse.json";
+
+if (fs.existsSync(path)) {
+
+  const data = JSON.parse(fs.readFileSync(path));
+  const guildData = data[message.guild.id];
+
+  if (guildData && guildData.enabled) {
+
+    const content = message.content.toLowerCase();
+
+    for (const trigger in guildData.triggers) {
+
+      if (content.includes(trigger)) {
+        message.reply(guildData.triggers[trigger]);
+        break;
+      }
+
+    }
+
+  }
+
+}
 
   const normalized = message.content
     .toLowerCase()
