@@ -715,6 +715,22 @@ sendWelcome(member, channel);
 
 /* ================= LEVEL CARD SYSTEM ================= */
 
+function drawRoundedRect(ctx, x, y, width, height, radius) {
+
+ctx.beginPath();
+ctx.moveTo(x + radius, y);
+ctx.lineTo(x + width - radius, y);
+ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+ctx.lineTo(x + width, y + height - radius);
+ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+ctx.lineTo(x + radius, y + height);
+ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+ctx.lineTo(x, y + radius);
+ctx.quadraticCurveTo(x, y, x + radius, y);
+ctx.closePath();
+
+}
+
 async function generateDualLevelCard(member, data){
 
 const width = 1000;
@@ -804,6 +820,8 @@ const ctx = canvas.getContext("2d");
 
 const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
 ctx.drawImage(bg,0,0,width,height);
+ctx.fillStyle = "rgba(0,0,0,0.35)";
+ctx.fillRect(0,0,width,height);
 
 /* LEVEL */
 
@@ -820,22 +838,63 @@ ctx.arc(120,180,90,0,Math.PI*2);
 ctx.clip();
 ctx.drawImage(avatar,30,90,180,180);
 ctx.restore();
+ctx.shadowColor = "#00FFC6";
+ctx.shadowBlur = 25;
+
+ctx.strokeStyle = "#00FFC6";
+ctx.lineWidth = 6;
+
+ctx.beginPath();
+ctx.arc(120,180,96,0,Math.PI*2);
+ctx.stroke();
+
+ctx.shadowBlur = 0;
 
 /* USERNAME */
 
 ctx.fillStyle="#FFFFFF";
 ctx.font="40px MontserratBold";
 ctx.fillText(member.user.username,260,120);
+ctx.fillStyle = "#FFD166";
 
-/* RANK */
+drawRoundedRect(ctx,260,150,120,32,10);
+ctx.fill();
 
-ctx.font="26px Montserrat";
-ctx.fillText(`Rank #${rank}`,260,170);
+ctx.fillStyle = "#000";
+ctx.font = "20px MontserratBold";
+ctx.fillText(`#${rank}`,285,172);
+ctx.fillStyle = "#00FFC6";
+
+drawRoundedRect(ctx,820,90,120,40,12);
+ctx.fill();
+
+ctx.fillStyle = "#000";
+ctx.font = "24px MontserratBold";
+ctx.fillText(`LV ${levelData.level}`,835,118);
+
 
 /* BAR */
 
 ctx.fillStyle="#2C2F33";
-ctx.fillRect(260,210,600,30);
+const barX = 260;
+const barY = 210;
+const barWidth = 600;
+const barHeight = 32;
+
+ctx.fillStyle = "#2C2F33";
+
+drawRoundedRect(ctx, barX, barY, barWidth, barHeight, 20);
+ctx.fill();
+
+const gradient = ctx.createLinearGradient(barX,0,barX+barWidth,0);
+
+gradient.addColorStop(0,"#00FFC6");
+gradient.addColorStop(1,"#00A8FF");
+
+ctx.fillStyle = gradient;
+
+drawRoundedRect(ctx, barX, barY, barWidth * progress, barHeight, 20);
+ctx.fill();
 
 const gradient = ctx.createLinearGradient(260,0,860,0);
 gradient.addColorStop(0,"#00FFC6");
