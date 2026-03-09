@@ -896,12 +896,6 @@ ctx.fillStyle = gradient;
 drawRoundedRect(ctx, barX, barY, barWidth * progress, barHeight, 20);
 ctx.fill();
 
-const gradient = ctx.createLinearGradient(260,0,860,0);
-gradient.addColorStop(0,"#00FFC6");
-gradient.addColorStop(1,"#00A8FF");
-
-ctx.fillStyle = gradient;
-ctx.fillRect(260,210,600 * progress,30);
 
 /* XP */
 
