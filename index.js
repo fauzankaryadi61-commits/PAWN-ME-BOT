@@ -890,7 +890,7 @@ return canvas.toBuffer();
 
 /* ================= LEVEL CARD SYSTEM ================= */
 
-async function generateSingleLevelCard(member, exp, rank, label){
+async function generateSingleLevelCard(member, exp, rank){
 
 const width = 1000;
 const height = 360;
@@ -898,93 +898,99 @@ const height = 360;
 const canvas = createCanvas(width,height);
 const ctx = canvas.getContext("2d");
 
+/* BACKGROUND */
+
 const bg = await loadImage("https://i.imgur.com/8mpdC50.png");
 ctx.drawImage(bg,0,0,width,height);
-ctx.fillStyle = "rgba(0,0,0,0.35)";
+
+ctx.fillStyle = "rgba(0,0,0,0.45)";
 ctx.fillRect(0,0,width,height);
 
-/* LEVEL */
+/* LEVEL DATA */
 
 const levelData = getLevelData(exp);
 const progress = levelData.currentXP / levelData.requiredXP;
 
 /* AVATAR */
 
-const avatar = await loadImage(member.user.displayAvatarURL({format:"png",size:256}));
+const avatar = await loadImage(member.user.displayAvatarURL({extension:"png",size:256}));
 
 ctx.save();
 ctx.beginPath();
 ctx.arc(120,180,90,0,Math.PI*2);
+ctx.closePath();
 ctx.clip();
+
 ctx.drawImage(avatar,30,90,180,180);
 ctx.restore();
-ctx.shadowColor = "#00FFC6";
-ctx.shadowBlur = 25;
 
-ctx.strokeStyle = "#00FFC6";
+/* AVATAR BORDER */
+
 ctx.lineWidth = 6;
-
+ctx.strokeStyle = "#000";
 ctx.beginPath();
 ctx.arc(120,180,96,0,Math.PI*2);
 ctx.stroke();
 
-ctx.shadowBlur = 0;
+/* ONLINE DOT */
+
+ctx.fillStyle = "#3BA55D";
+ctx.beginPath();
+ctx.arc(190,250,18,0,Math.PI*2);
+ctx.fill();
 
 /* USERNAME */
 
-ctx.fillStyle="#FFFFFF";
-ctx.font="40px MontserratBold";
-ctx.fillText(member.user.username,260,120);
-ctx.fillStyle = "#FFD166";
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "48px MontserratBold";
+ctx.fillText(member.user.username,260,150);
 
-drawRoundedRect(ctx,260,150,120,32,10);
-ctx.fill();
+/* RANK */
 
-ctx.fillStyle = "#000";
-ctx.font = "20px MontserratBold";
-ctx.fillText(`#${rank}`,285,172);
-ctx.fillStyle = "#00FFC6";
+ctx.font = "30px Montserrat";
+ctx.fillStyle = "#FFFFFF";
+ctx.fillText(`RANK #${rank}`,600,120);
 
-drawRoundedRect(ctx,820,90,120,40,12);
-ctx.fill();
+/* LEVEL */
 
-ctx.fillStyle = "#000";
-ctx.font = "24px MontserratBold";
-ctx.fillText(`LV ${levelData.level}`,835,118);
+ctx.fillStyle = "#7BDFF2";
+ctx.font = "38px MontserratBold";
+ctx.fillText(`LEVEL ${levelData.level}`,800,120);
 
+/* PROGRESS BAR BG */
 
-/* BAR */
-
-ctx.fillStyle="#2C2F33";
 const barX = 260;
 const barY = 210;
 const barWidth = 600;
-const barHeight = 32;
+const barHeight = 40;
 
-ctx.fillStyle = "#2C2F33";
+ctx.fillStyle = "#4F545C";
 
-drawRoundedRect(ctx, barX, barY, barWidth, barHeight, 20);
+drawRoundedRect(ctx,barX,barY,barWidth,barHeight,25);
 ctx.fill();
+
+/* PROGRESS BAR */
 
 const gradient = ctx.createLinearGradient(barX,0,barX+barWidth,0);
 
-gradient.addColorStop(0,"#00FFC6");
-gradient.addColorStop(1,"#00A8FF");
+gradient.addColorStop(0,"#6ED3CF");
+gradient.addColorStop(1,"#3DA9FC");
 
 ctx.fillStyle = gradient;
 
-drawRoundedRect(ctx, barX, barY, barWidth * progress, barHeight, 20);
+drawRoundedRect(ctx,barX,barY,barWidth * progress,barHeight,25);
 ctx.fill();
 
+/* XP TEXT */
 
-/* XP */
+ctx.fillStyle = "#FFFFFF";
+ctx.font = "28px Montserrat";
 
-ctx.font="22px Montserrat";
-ctx.fillText(`${levelData.currentXP} / ${levelData.requiredXP} XP`,870,200);
-
-ctx.fillText(`Level ${levelData.level}`,870,120);
-
-ctx.fillText(label,260,200);
+ctx.fillText(
+`${formatXP(levelData.currentXP)} / ${formatXP(levelData.requiredXP)} XP`,
+820,
+190
+);
 
 return canvas.toBuffer();
 }
