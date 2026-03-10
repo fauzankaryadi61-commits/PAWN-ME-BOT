@@ -507,7 +507,7 @@ client.on("messageCreate", async (message) => {
 
 /* ================= AUTO RESPONSE ================= */
 
-const path = "./data/autoresponse.json";
+const path = "data/autoresponse.json";
 
 if (fs.existsSync(path)) {
 
@@ -2212,7 +2212,7 @@ if (interaction.commandName === "pmxpremove") {
 
 if (interaction.commandName === "zuan") {
 
-  const path = "./data/autoresponse.json";
+  const path = "data/autoresponse.json";
 
   if (!fs.existsSync(path)) fs.writeFileSync(path, "{}");
 
