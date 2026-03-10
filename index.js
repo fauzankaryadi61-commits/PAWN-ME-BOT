@@ -2206,7 +2206,6 @@ if (interaction.commandName === "pmxpremove") {
 
 if (interaction.commandName === "zuan") {
 
-  const fs = require("fs");
   const path = "./data/autoresponse.json";
 
   if (!fs.existsSync(path)) fs.writeFileSync(path, "{}");
@@ -2226,13 +2225,67 @@ if (interaction.commandName === "zuan") {
   if (sub === "enable") {
     data[guildId].enabled = true;
     fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return interaction.reply("Auto response diaktifkan.");
+
+    return interaction.reply({
+      content: "Auto response diaktifkan.",
+      ephemeral: true
+    });
   }
 
   if (sub === "disable") {
     data[guildId].enabled = false;
     fs.writeFileSync(path, JSON.stringify(data, null, 2));
-    return interaction.reply("Auto response dimatikan.");
+
+    return interaction.reply({
+      content: "Auto response dimatikan.",
+      ephemeral: true
+    });
+  }
+
+  if (sub === "add") {
+
+    const kata = interaction.options.getString("kata").toLowerCase();
+    const respon = interaction.options.getString("respon");
+
+    data[guildId].triggers[kata] = respon;
+
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+
+    return interaction.reply({
+      content: `Trigger ditambahkan: ${kata}`,
+      ephemeral: true
+    });
+  }
+
+  if (sub === "remove") {
+
+    const kata = interaction.options.getString("kata").toLowerCase();
+
+    delete data[guildId].triggers[kata];
+
+    fs.writeFileSync(path, JSON.stringify(data, null, 2));
+
+    return interaction.reply({
+      content: `Trigger dihapus: ${kata}`,
+      ephemeral: true
+    });
+  }
+
+  if (sub === "list") {
+
+    const list = Object.keys(data[guildId].triggers);
+
+    if (!list.length) {
+      return interaction.reply({
+        content: "Belum ada trigger.",
+        ephemeral: true
+      });
+    }
+
+    return interaction.reply({
+      content: list.join("\n"),
+      ephemeral: true
+    });
   }
 
 }
